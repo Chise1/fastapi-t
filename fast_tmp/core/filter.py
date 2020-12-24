@@ -1,5 +1,5 @@
-from typing import List, Union, Optional, Any, Type, Tuple
 import inspect
+from typing import Any, List, Optional, Tuple, Type, Union
 
 from pydantic.main import BaseModel
 

@@ -1,15 +1,18 @@
-from typing import List, Dict, Type, Any, Callable, Iterable, Tuple, Union, Optional
 from enum import Enum
+from typing import (
+    Any, Callable, Dict, Iterable, List, Optional, Tuple, Type, Union)
+
+from fastapi import APIRouter, Depends, FastAPI
 from pydantic import BaseModel
 from pydantic.utils import get_model
 from tortoise import Model
-from fastapi import APIRouter, Depends, FastAPI
 from tortoise.query_utils import Q
-from .page import LimitOffsetPaginator, limit_offset_paginator
-from fast_tmp.choices import Method, ElementType
-from .filter import search_depend, DependField, filter_depend, SearchValue
-from ..utils.model import get_model_from_str
 
+from fast_tmp.choices import ElementType, Method
+
+from ..utils.model import get_model_from_str
+from .filter import DependField, SearchValue, filter_depend, search_depend
+from .page import LimitOffsetPaginator, limit_offset_paginator
 
 
 class RequestMixin(BaseModel):

@@ -1,11 +1,11 @@
 import os
 
 from fastapi import FastAPI
-from src.common import get_file_content
 from starlette.requests import Request
 from starlette.templating import Jinja2Templates
 
 from src import settings
+from src.common import get_file_content
 from src.settings import BASE_DIR
 
 app = FastAPI()

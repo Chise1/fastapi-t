@@ -5,14 +5,12 @@ from tortoise import fields, models
 from fast_tmp.utils.password import make_password, verify_password
 
 
-class AbstractUser(models.Model):
+# 采用引用方式使用，只要再主models里面引入这三个model，就能创建对应表
+class User(models.Model):
     username = fields.CharField(max_length=20, unique=True)
     password = fields.CharField(max_length=200, )
     is_active = fields.BooleanField(default=True, )
     is_superuser = fields.BooleanField(default=False)
-
-    class Meta:
-        abstract = True
 
     def set_password(self, raw_password: str):
         """
@@ -34,16 +32,13 @@ class AbstractUser(models.Model):
         return self.username
 
 
-class AbstractPermission(models.Model):
+class Permission(models.Model):
     label = fields.CharField(max_length=128)
     model = fields.CharField(max_length=128)
     codename = fields.CharField(max_length=128)
 
     def __str__(self):
         return self.label
-
-    class Meta:
-        abstract = True
 
     @classmethod
     def make_permission(cls, model: Type[models.Model], ):
@@ -53,13 +48,10 @@ class AbstractPermission(models.Model):
         # todo:生成对应默认权限
 
 
-class AbstractRole(models.Model):
+class Group(models.Model):
     label = fields.CharField(max_length=50)
-    users: fields.ManyToManyRelation[AbstractUser] = fields.ManyToManyField("models.User")
-    permissions: fields.ManyToManyRelation[AbstractPermission] = fields.ManyToManyField("models.Permission")
+    users = fields.ManyToManyField("models.User")
+    permissions = fields.ManyToManyField("models.Permission")
 
     def __str__(self):
         return self.label
-
-    class Meta:
-        abstract = True

@@ -7,13 +7,15 @@
 @Software: PyCharm
 @info    :
 """
-from typing import List, Dict, Type, Any, Callable, Optional
-from .mixins import RequestMixin
+from typing import Any, Callable, Dict, List, Optional, Type
+
+from fastapi import APIRouter, FastAPI
 from tortoise import Model
+
 from fast_tmp.conf import settings
-from fastapi import FastAPI, APIRouter
 
 from ..choices import ElementType
+from .mixins import RequestMixin
 
 
 class AdminApp(FastAPI):

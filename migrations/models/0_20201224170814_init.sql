@@ -1,0 +1,47 @@
+##### upgrade #####
+CREATE TABLE IF NOT EXISTS `config` (
+    `id` INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    `label` VARCHAR(200) NOT NULL,
+    `key` VARCHAR(20) NOT NULL,
+    `value` TEXT NOT NULL,
+    `status` SMALLINT NOT NULL  COMMENT 'on: 1\noff: 0' DEFAULT 1
+) CHARACTER SET utf8mb4;
+CREATE TABLE IF NOT EXISTS `group` (
+    `id` INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    `label` VARCHAR(50) NOT NULL
+) CHARACTER SET utf8mb4;
+CREATE TABLE IF NOT EXISTS `message` (
+    `id` INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    `info` VARCHAR(32) NOT NULL  COMMENT '信息'
+) CHARACTER SET utf8mb4;
+CREATE TABLE IF NOT EXISTS `permission` (
+    `id` INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    `label` VARCHAR(128) NOT NULL,
+    `model` VARCHAR(128) NOT NULL,
+    `codename` VARCHAR(128) NOT NULL
+) CHARACTER SET utf8mb4;
+CREATE TABLE IF NOT EXISTS `user` (
+    `id` INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    `username` VARCHAR(20) NOT NULL UNIQUE,
+    `password` VARCHAR(200) NOT NULL,
+    `is_active` BOOL NOT NULL  DEFAULT 1,
+    `is_superuser` BOOL NOT NULL  DEFAULT 0
+) CHARACTER SET utf8mb4;
+CREATE TABLE IF NOT EXISTS `aerich` (
+    `id` INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    `version` VARCHAR(255) NOT NULL,
+    `app` VARCHAR(20) NOT NULL,
+    `content` LONGTEXT NOT NULL
+) CHARACTER SET utf8mb4;
+CREATE TABLE IF NOT EXISTS `group_permission` (
+    `group_id` INT NOT NULL,
+    `permission_id` INT NOT NULL,
+    FOREIGN KEY (`group_id`) REFERENCES `group` (`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`permission_id`) REFERENCES `permission` (`id`) ON DELETE CASCADE
+) CHARACTER SET utf8mb4;
+CREATE TABLE IF NOT EXISTS `group_user` (
+    `group_id` INT NOT NULL,
+    `user_id` INT NOT NULL,
+    FOREIGN KEY (`group_id`) REFERENCES `group` (`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE
+) CHARACTER SET utf8mb4;

@@ -3,4 +3,6 @@ from rearq import ReArq
 
 from src import settings
 
-rearq = ReArq(**settings.REARQ,)
+rearq = ReArq(
+    **settings.REARQ,
+)

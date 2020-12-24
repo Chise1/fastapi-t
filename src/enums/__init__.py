@@ -8,3 +8,6 @@ class Status(IntegerChoices):
 
     on = 1, "开启"
     off = 0, "关闭"
+
+
+x = Status.choices

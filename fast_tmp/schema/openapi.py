@@ -1,8 +1,10 @@
 from enum import Enum
 from typing import Any, Callable, Dict, Iterable, List, Optional, Union
-from fast_tmp.choices import ElementType
+
 from fastapi.logger import logger
 from pydantic import AnyUrl, BaseModel, Field
+
+from fast_tmp.choices import ElementType
 
 try:
     import email_validator

@@ -7,7 +7,6 @@
 @Software: PyCharm
 @info    :
 """
-from dotenv import load_dotenv
 import os
 from . import global_settings
 
@@ -36,9 +35,9 @@ class Settings:
             if setting.isupper():
                 setting_value = getattr(mod, setting)
                 setattr(self, setting, setting_value)
-        # if not self.SECRET_KEY:
-        #     raise ImproperlyConfigured("The SECRET_KEY setting must not be empty.")
-        # todo:时间处理
+        if not getattr(self, 'SECRET_KEY'):
+            raise AttributeError("The SECRET_KEY setting must not be empty.")
+        # fixme:时间处理??
 
 
 settings = Settings()

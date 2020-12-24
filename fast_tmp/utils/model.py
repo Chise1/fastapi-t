@@ -1,6 +1,6 @@
 from typing import Type
 
-from tortoise import Tortoise, Model
+from tortoise import Model, Tortoise
 
 
 def get_all_models():

@@ -1,40 +1,37 @@
 import http.client
 from enum import Enum
-from typing import Any, Dict, List, Optional, Sequence, Set, Tuple, Type, Union, cast
+from typing import (Any, Dict, List, Optional, Sequence, Set, Tuple, Type,
+                    Union, cast)
 
 from fastapi import routing
 from fastapi.datastructures import DefaultPlaceholder
 from fastapi.dependencies.models import Dependant
 from fastapi.dependencies.utils import get_flat_dependant, get_flat_params
 from fastapi.encoders import jsonable_encoder
-from fastapi.openapi.constants import (
-    METHODS_WITH_BODY,
-    REF_PREFIX,
-    STATUS_CODES_WITH_NO_BODY,
-)
-from fast_tmp.schema.openapi import OpenAPI
-from fastapi.openapi.utils import get_openapi_operation_metadata, get_openapi_security_definitions, \
-    get_openapi_operation_parameters, get_openapi_operation_request_body, validation_error_definition, \
-    validation_error_response_definition, get_flat_models_from_routes, status_code_ranges
+from fastapi.openapi.constants import (METHODS_WITH_BODY, REF_PREFIX,
+                                       STATUS_CODES_WITH_NO_BODY)
+from fastapi.openapi.utils import (get_flat_models_from_routes,
+                                   get_openapi_operation_metadata,
+                                   get_openapi_operation_parameters,
+                                   get_openapi_operation_request_body,
+                                   get_openapi_security_definitions,
+                                   status_code_ranges,
+                                   validation_error_definition,
+                                   validation_error_response_definition)
 from fastapi.params import Body, Param
-from fastapi.utils import (
-    deep_dict_update,
-    generate_operation_id_for_path,
-    get_model_definitions,
-)
+from fastapi.utils import (deep_dict_update, generate_operation_id_for_path,
+                           get_model_definitions)
 from pydantic import BaseModel
 from pydantic.fields import ModelField
-from pydantic.schema import (
-    field_schema,
-    get_flat_models_from_fields,
-    get_model_name_map,
-)
+from pydantic.schema import (field_schema, get_flat_models_from_fields,
+                             get_model_name_map)
 from pydantic.utils import lenient_issubclass
 from starlette.responses import JSONResponse
 from starlette.routing import BaseRoute
 from starlette.status import HTTP_422_UNPROCESSABLE_ENTITY
 
 from fast_tmp.choices import ElementType
+from fast_tmp.schema.openapi import OpenAPI
 
 
 def get_openapi_path(

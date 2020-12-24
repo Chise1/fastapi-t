@@ -7,3 +7,6 @@
 @Software: PyCharm
 @info    :
 """
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 30
+USER_MODEL="User"

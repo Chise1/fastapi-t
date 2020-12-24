@@ -1,4 +1,5 @@
 import uvicorn
+
 from src import settings
 from src.factory import create_app
 
