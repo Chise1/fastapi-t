@@ -1,6 +1,6 @@
 import uvicorn
-from realman import settings
-from realman.factory import create_app
+from src import settings
+from src.factory import create_app
 
 app = create_app()
 

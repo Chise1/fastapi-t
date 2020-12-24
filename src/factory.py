@@ -4,7 +4,6 @@ from fastapi.middleware import Middleware
 from fastapi.middleware.cors import CORSMiddleware
 from tortoise import Tortoise
 from tortoise.contrib.fastapi import register_tortoise
-
 from src import rearq, settings
 
 
@@ -34,6 +33,7 @@ def init_app(main_app: FastAPI):
 
 def create_app():
     fast_app = FastAPI(debug=settings.DEBUG)
+
     Tortoise.init_models(settings.TORTOISE_ORM["apps"]["models"]["models"], "models")
 
     # fixme:

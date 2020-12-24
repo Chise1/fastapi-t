@@ -1,8 +1,11 @@
-from fastapi_admin.models import AbstractAdminLog, AbstractPermission, AbstractRole, AbstractUser
-
-
+from fast_tmp.models import AbstractPermission, AbstractRole, AbstractUser
+from tortoise import fields,Model
+from tortoise import timezone
+from src.enums import Status
+class Message(Model):
+    info=fields.CharField(max_length=32,description='信息')
 class User(AbstractUser):
-    last_login = fields.DatetimeField(description="Last Login", default=datetime.datetime.now)
+    last_login = fields.DatetimeField(description="Last Login", default=timezone.datetime.now)
     avatar = fields.CharField(max_length=200, default="")
     intro = fields.TextField(default="")
     created_at = fields.DatetimeField(auto_now_add=True)
@@ -38,17 +41,12 @@ class Role(AbstractRole):
     """
 
 
-class AdminLog(AbstractAdminLog):
-    """
-    must inheritance AbstractAdminLog
-    """
 
-
-class Config(Model):
-    label = fields.CharField(max_length=200)
-    key = fields.CharField(max_length=20)
-    value = fields.JSONField()
-    status: Status = fields.IntEnumField(Status, default=Status.on)
-
-    def __str__(self):
-        return f"{self.pk}#{self.label}"
+# class Config(Model):
+#     label = fields.CharField(max_length=200)
+#     key = fields.CharField(max_length=20)
+#     value = fields.JSONField()
+#     status: Status = fields.IntEnumField(Status.choices, default=Status.on)
+#
+#     def __str__(self):
+#         return f"{self.pk}#{self.label}"

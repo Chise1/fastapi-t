@@ -51,7 +51,7 @@ TORTOISE_ORM = {
     },
     "apps": {
         "models": {
-            "models": ["realman.models", "aerich.models", "plibs.contrib.fastapi.admin.models"],
+            "models": ["src.models", "aerich.models"],
             "default_connection": "default",
         },
     },
