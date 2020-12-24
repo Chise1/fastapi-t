@@ -1,10 +1,13 @@
 from fast_tmp.redis import AsyncRedisUtil
 from fastapi import FastAPI
-from tortoise import Tortoise
 from fastapi.middleware import Middleware
-from src import rearq, settings
 from fastapi.middleware.cors import CORSMiddleware
+from tortoise import Tortoise
 from tortoise.contrib.fastapi import register_tortoise
+
+from src import rearq, settings
+
+
 @rearq.on_startup
 async def on_startup():
     await AsyncRedisUtil.init(**settings.REDIS)
@@ -17,7 +20,7 @@ async def on_shutdown():
     await Tortoise.close_connections()
 
 
-def init_app(main_app:FastAPI):
+def init_app(main_app: FastAPI):
     @main_app.on_event("startup")
     async def startup() -> None:
         await AsyncRedisUtil.init(**settings.REDIS)
@@ -31,7 +34,7 @@ def init_app(main_app:FastAPI):
 
 def create_app():
     fast_app = FastAPI(debug=settings.DEBUG)
-    Tortoise.init_models(settings.TORTOISE_ORM['apps']['models']['models'],'models')
+    Tortoise.init_models(settings.TORTOISE_ORM["apps"]["models"]["models"], "models")
 
     # fixme:
     # 初始化tortoise的model结构之后再引入一些包
