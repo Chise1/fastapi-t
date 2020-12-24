@@ -1,4 +1,4 @@
 .idea/
 venv/
 .env
-fast_tmp
+fast_tmp/
