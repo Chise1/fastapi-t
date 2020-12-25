@@ -1,4 +1,4 @@
-from fast_tmp.utils.enums import IntEnumType
+from fast_tmp.utils.base_enums import IntEnumType
 
 
 class Status(IntEnumType):
