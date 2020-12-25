@@ -4,3 +4,4 @@ venv/
 fast_tmp/
 migrations/
 aerich.ini
+__pycache__/
