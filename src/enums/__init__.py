@@ -1,4 +1,4 @@
-from fast_tmp.models.enums import IntEnumType
+from fast_tmp.utils.enums import IntEnumType
 
 
 class Status(IntEnumType):
@@ -8,6 +8,3 @@ class Status(IntEnumType):
 
     on = 1, "开启"
     off = 0, "关闭"
-
-
-x = Status.choices

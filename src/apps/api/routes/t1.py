@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from src.models import Group, User
+from fast_tmp.models import Group, User
 
 router = APIRouter(prefix="/t1")
 
