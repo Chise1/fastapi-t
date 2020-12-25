@@ -9,7 +9,7 @@ class Promise:
     pass
 
 
-__all__ = ['IntegerChoices', 'TextChoices']
+__all__ = ['IntEnumType', 'CharEnumType']
 
 
 class ChoicesMeta(enum.EnumMeta):
@@ -81,12 +81,12 @@ class Choices(enum.Enum, metaclass=ChoicesMeta):
         return str(self.value)
 
 
-class IntegerChoices(int, Choices):
+class IntEnumType(int, Choices):
     """Class for creating enumerated integer choices."""
     pass
 
 
-class TextChoices(str, Choices):
+class CharEnumType(str, Choices):
     """Class for creating enumerated string choices."""
 
     def _generate_next_value_(name, start, count, last_values):

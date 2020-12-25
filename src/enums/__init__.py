@@ -1,7 +1,7 @@
-from fast_tmp.models.enums import IntegerChoices
+from fast_tmp.models.enums import IntEnumType
 
 
-class Status(IntegerChoices):
+class Status(IntEnumType):
     """
     状态
     """
