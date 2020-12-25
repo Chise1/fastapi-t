@@ -8,6 +8,7 @@
 @info    :
 """
 import os
+
 from . import global_settings
 
 FASTAPI_VARIABLE = "FASTAPI_SETTINGS_MODULE"

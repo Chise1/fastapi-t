@@ -1,6 +1,6 @@
 from enum import Enum
-from typing import (
-    Any, Callable, Dict, Iterable, List, Optional, Tuple, Type, Union)
+from typing import (Any, Callable, Dict, Iterable, List, Optional, Tuple, Type,
+                    Union)
 
 from fastapi import APIRouter, Depends, FastAPI
 from pydantic import BaseModel

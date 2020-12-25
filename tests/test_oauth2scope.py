@@ -3,11 +3,7 @@ from typing import List, Optional
 
 import uvicorn
 from fastapi import Depends, FastAPI, HTTPException, Security, status
-from fastapi.security import (
-    OAuth2PasswordBearer,
-    OAuth2PasswordRequestForm,
-    SecurityScopes,
-)
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm, SecurityScopes
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from pydantic import BaseModel, ValidationError
@@ -102,9 +98,7 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     return encoded_jwt
 
 
-async def get_current_user(
-    security_scopes: SecurityScopes, token: str = Depends(oauth2_scheme)
-):
+async def get_current_user(security_scopes: SecurityScopes, token: str = Depends(oauth2_scheme)):
     if security_scopes.scopes:
         authenticate_value = f'Bearer scope="{security_scopes.scope_str}"'
     else:
@@ -136,9 +130,7 @@ async def get_current_user(
     return user
 
 
-async def get_current_active_user(
-    current_user: User = Security(get_current_user, scopes=["me"])
-):
+async def get_current_active_user(current_user: User = Security(get_current_user, scopes=["me"])):
     if current_user.disabled:
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
@@ -163,9 +155,7 @@ async def read_users_me(current_user: User = Depends(get_current_active_user)):
 
 
 @app.get("/users/me/items/")
-async def read_own_items(
-    current_user: User = Security(get_current_active_user, scopes=["items"])
-):
+async def read_own_items(current_user: User = Security(get_current_active_user, scopes=["items"])):
     return [{"item_id": "Foo", "owner": current_user.username}]
 
 
@@ -173,7 +163,6 @@ async def read_own_items(
 async def read_system_status(current_user: User = Depends(get_current_user)):
     return {"status": "ok"}
 
+
 if __name__ == "__main__":
-    uvicorn.run(
-        "tests.test_oauth2scope:app", port=8000, debug=True, reload=True, lifespan="on"
-    )
+    uvicorn.run("tests.test_oauth2scope:app", port=8000, debug=True, reload=True, lifespan="on")

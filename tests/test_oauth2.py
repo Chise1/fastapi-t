@@ -56,8 +56,6 @@ def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
 
 
-
-
 def get_password_hash(password):
     return pwd_context.hash(password)
 
@@ -141,6 +139,4 @@ async def read_own_items(current_user: User = Depends(get_current_active_user)):
 
 
 if __name__ == "__main__":
-    uvicorn.run(
-        "tests.test_oauth2:app", port=8000, debug=True, reload=True, lifespan="on"
-    )
+    uvicorn.run("tests.test_oauth2:app", port=8000, debug=True, reload=True, lifespan="on")
