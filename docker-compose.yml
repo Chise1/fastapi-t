@@ -8,8 +8,9 @@ services:
       - '8008:8000'
     depends_on:
       - redis
-    image: realman
-    command: uvicorn realman.main:app --port 8000 --host 0.0.0.0
+      - mysql
+    image: fastapi-t
+    command: uvicorn fatapi_t.main:app --port 8000 --host 0.0.0.0
   timing-worker:
     env_file:
       - .env
@@ -24,29 +25,19 @@ services:
     depends_on:
       - realman
     command: rearq worker realman.factory:rearq -q task
-  withdraw-worker:
-    env_file:
-      - .env
-    image: realman
-    depends_on:
-      - realman
-    command: rearq worker realman.factory:rearq -q withdraw
-  notify-worker:
-    env_file:
-      - .env
-    image: realman
-    depends_on:
-      - realman
-    command: rearq worker realman.factory:rearq -q notify
-  pass-task-worker:
-    env_file:
-      - .env
-    image: realman
-    depends_on:
-      - realman
-    command: rearq worker realman.factory:rearq -q pass_task
   redis:
     hostname: redis
     image: redis
     volumes:
       - ./redis/data:/data
+  mysql:
+    hostname: mysql
+    image: mysql:latest
+    restart: always
+    command: --default-authentication-plugin=mysql_native_password #这行代码解决无法访问的问题
+    volumes:
+      - /mysql/data:/var/lib/mysql/
+    environment:
+      - MYSQL_ROOT_PASSWORD=123456
+      - MYSQL_DATABASE:fastapi-t
+      - LANG=C.UTF-8mb4
