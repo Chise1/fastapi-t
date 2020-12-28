@@ -1,13 +1,19 @@
 import inspect
-from typing import Any, List, Optional, Tuple, Type, Union
+from typing import Any, List, Optional, Tuple, Type, Union, Callable
 
 from pydantic.main import BaseModel
 
 
 class DependField(BaseModel):
     field_name: str
-    lookup_expr: str  # 搜索按照这个字段来
+    lookup_expr: Optional[str]  # 搜索按照这个字段来
     field_type: Type[Any] = str  # 字段类型
+
+    def __str__(self):
+        if self.lookup_expr:
+            return self.field_name + "__" + self.lookup_expr
+        else:
+            return self.field_name
 
 
 class SearchValue(BaseModel):
@@ -15,25 +21,14 @@ class SearchValue(BaseModel):
     value: str
 
 
-# todo:等待完成和测试
-def search_depend(fields: Tuple[Union[DependField, str], ...]) -> Optional[SearchValue]:
+def search_depend(search: Optional[str] = None) -> Optional[str]:
     """
     搜索依赖
     """
-
-    def f(search: str = None):
-        if search is not None:
-            res = []
-            for field in fields:
-                res.append(field)
-            return SearchValue(search_fields=res, value=search)
-        else:
-            return None
-
-    return f
+    return search
 
 
-def filter_depend(fields: Tuple[Union[DependField, str], ...]):
+def filter_depend(fields: Tuple[Union[DependField, str], ...]) -> Callable:
     """
     过滤依赖
     """

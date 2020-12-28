@@ -3,15 +3,15 @@ from typing import Type
 from tortoise import fields, models
 
 from fast_tmp.utils.password import make_password, verify_password
+from fast_tmp.conf import settings
 
 
-# 采用引用方式使用，只要再主models里面引入这三个model，就能创建对应表
-class User(models.Model):
+class AbstractUser(models.Model):
     username = fields.CharField(max_length=20, unique=True)
     password = fields.CharField(max_length=200, )
     is_active = fields.BooleanField(default=True, )
     is_superuser = fields.BooleanField(default=False)
-    # groups: fields.ManyToManyRelation['models.Group']
+    groups: fields.ManyToManyRelation['Group']
 
     def set_password(self, raw_password: str):
         """
@@ -32,12 +32,21 @@ class User(models.Model):
     def __str__(self):
         return self.username
 
+    class Meta:
+        abstract = True
+
+
+# 采用引用方式使用，只要再主models里面引入这三个model，就能创建对应表
+if settings.AUTH_USER_MODEL == 'models.User':
+    class User(AbstractUser):
+        pass
+
 
 class Permission(models.Model):
     label = fields.CharField(max_length=128)
     model = fields.CharField(max_length=128)
     codename = fields.CharField(max_length=128, unique=True)
-    # groups: fields.ManyToManyRelation['models.Group']
+    groups: fields.ManyToManyRelation['Group']
 
     def __str__(self):
         return self.label
@@ -72,8 +81,8 @@ class Permission(models.Model):
 
 class Group(models.Model):
     label = fields.CharField(max_length=50)
-    users= fields.ManyToManyField("models.User")
-    permissions= fields.ManyToManyField("models.Permission")
+    users = fields.ManyToManyField(settings.AUTH_USER_MODEL)
+    permissions = fields.ManyToManyField("models.Permission")
 
     def __str__(self):
         return self.label

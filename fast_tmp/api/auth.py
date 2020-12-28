@@ -8,7 +8,8 @@ from jose import JWTError, jwt
 from pydantic import BaseModel
 
 from fast_tmp.conf import settings
-from fast_tmp.factory import templates
+from fast_tmp.core.mixins import AimsListMixin
+from fast_tmp.templates_app import templates
 from fast_tmp.schema import UserCreateSchema
 from fast_tmp.utils.model import get_model_from_str
 
@@ -134,6 +135,11 @@ async def create_user(user: UserCreateSchema):
 
 from fastapi import Request
 from fastapi.responses import HTMLResponse
+
+x = AimsListMixin(path="/list", prefix="dd", search_classes=('name',), model="User",app_label='models')
+x2 = AimsListMixin(path='/list2', prefix="d2", model='Permission',app_label='models')
+x.init(auth_router)
+x.init(auth_router)
 
 
 @auth_router.get('/template', response_class=HTMLResponse)

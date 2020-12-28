@@ -4,15 +4,15 @@ from typing import (Any, Callable, Dict, Iterable, List, Optional, Tuple, Type,
 
 from fastapi import APIRouter, Depends, FastAPI
 from pydantic import BaseModel
-from pydantic.utils import get_model
-from tortoise import Model
+from tortoise.contrib.pydantic import pydantic_model_creator, pydantic_queryset_creator
 from tortoise.query_utils import Q
 
 from fast_tmp.choices import ElementType, Method
+from ..schema.response import ListOk
 
 from ..utils.model import get_model_from_str
 from .filter import DependField, SearchValue, filter_depend, search_depend
-from .page import LimitOffsetPaginator, limit_offset_paginator
+from .page import AmisPaginator, amis_paginator
 
 
 class RequestMixin(BaseModel):
@@ -24,7 +24,7 @@ class RequestMixin(BaseModel):
     prefix: str
     # detail: bool
     element_type: ElementType
-    response_schema: Type[BaseModel] = ()
+    response_schema: Optional[BaseModel] = None
     permissions: Tuple[Union[str, 'Permission'], ...] = ()  # todo:增加权限支持
     request_element_type: Dict[str, ElementType] = {}  # 记录请求的类型
 
@@ -50,6 +50,9 @@ class RequestMixin(BaseModel):
     def has_perm(self, user_id: int):
         pass
 
+    def get_amis_schema(self) -> BaseModel:
+        raise Exception("尚未实现该功能")
+
 
 class GetMixin(RequestMixin):
     method = Method.GET
@@ -63,9 +66,6 @@ class PostMixin(RequestMixin):
     post_exclude_fields: List[str] = []  # fixme:考虑把枚举作为请求接口进行返回
 
     def get_create_schema(self):
-        pass
-
-    def get_response_schema(self):
         pass
 
     def init(self, router: Union[APIRouter, FastAPI]):
@@ -88,72 +88,100 @@ class DeleteMixin(RequestMixin):
 
 
 class ListMixin(GetMixin):
-    list_display: Iterable[str] = ("__str__",)
     element_type = ElementType.Grid
-    filter_classes: Tuple[Union[DependField, str], ...] = ()
-    search_classes: Tuple[Union[DependField, str], ...] = ()
-    order_classes: Tuple[str, ...] = ()  # fixme: 注意要考虑一下是否支持多个排序
+    filter_fields: Tuple[Union[DependField, str], ...] = ()
+    search_fields: Tuple[str, ...] = ()
+    order_fields: Tuple[str, ...] = ()  # fixme: 只支持单个排序
+    model: str
+    app_label: str = 'models'
+    include: Tuple[str, ...] = ()
+    exclude: Tuple[str, ...] = ()  # 在include存在的情况下会忽略exclude
 
     def init(self, router: APIRouter):  # fixme:等待初始化
         pass
 
-    def get_list_response_schema(self):
-        return self.response_schema
+    def get_response_schema(self):
+        if self.response_schema:
+            return self.response_schema
+        else:
+            raise Exception("未实现")
 
-    def get_filter_classes(self):
-        return self.filter_classes
+    def get_filter_fields(self):
+        return self.filter_fields
 
-    def get_search_classes(self):
-        return self.search_classes
+    def get_search_fields(self):
+        return self.search_fields
+
+    def get_queryset(self):
+        return self.get_model().all()
+
+    def get_model(self):
+        return get_model_from_str(self.model, self.app_label)
 
 
-class ListLimitOffsetMixin(ListMixin):
-    paginator: Type[BaseModel] = LimitOffsetPaginator
-    model: str
+class AimsListMixin(ListMixin):
+    paginator: Type[BaseModel] = AmisPaginator
 
     def init(self, router: APIRouter):  # todo:等待测试
-        # @router.get(self.path, response_model=self.get_list_response_schema())
-        # async def list(resource: str, page: LimitOffsetPaginator = Depends(limit_offset_paginator),
-        #                search_fields: dict = Depends(search_depend(self.get_search_classes())),
-        #                filter_fields: dict = Depends(filter_depend(self.get_filter_classes()))):
-        async def f(page: LimitOffsetPaginator = Depends(limit_offset_paginator),
-                    search_field: Optional[SearchValue] = Depends(search_depend(self.get_search_classes())), ):
-            model = get_model_from_str(self.model)
+        async def f(
+                page: AmisPaginator = Depends(amis_paginator),
+                search_field: Optional[str] = Depends(search_depend),
+                filter_fields: dict = Depends(filter_depend(self.get_filter_fields()))):
+            model = self.get_model()
             count = await model.all().count()
-            queryset = model.all().limit(page.limit).offset(page.offset)
+            queryset = model.all().limit(page.perPage).offset(page.perPage * (page.page - 1))
             q = Q()
             # 搜索功能
-            if search_field:
-                for k in search_field.search_fields:  # 搜索功能
-                    q |= Q(**{k: search_field.value})
+            if search_field:  # fixme:考虑是否要把数字单独考虑
+                for k in self.get_search_fields():  # 搜索功能
+                    q |= Q(**{k + "__icontains": search_field})
                 queryset = queryset.filter(q)
-            # for k, v in filter_fields.items():
-            #     queryset = queryset.filter(**{k: v})
+            for k, v in filter_fields.items():
+                if v:
+                    queryset = queryset.filter(**{k: v})
             return {
                 "count": count,
                 "data": await queryset
             }
 
-        f.__name__ = self.model + "_limit_offset_list_mixin"
-        router.get(self.path, response_model=self.get_list_response_schema())(f)
-        self.request_element_type[f.__name__] = ElementType.Grid
+        f.__name__ = self.model + "_aims_list_mixin"
+        router.get(self.path, response_model=self.get_response_schema())(f)
         return f
 
+    def get_response_schema(self):
+        model = self.get_model()
+        # fixme:考虑多对多一对多等字段的显示问题
+        if self.include:
+            res_model = pydantic_queryset_creator(model, name=model.__name__ + "AdminList", include=self.include)
+        elif self.exclude:
+            res_model = pydantic_queryset_creator(model, name=model.__name__ + "AdminList", exclude=self.exclude)
+        else:
+            res_model = pydantic_queryset_creator(model, name=model.__name__ + "AdminList", )
 
-class RetrieveMixin(GetMixin):
-    pass
+        class ResModel(BaseModel):
+            total: int
+            items: res_model
 
+        # todo:这里需要动态生成Schema
+        r1 = ResModel
+        r1.__name__ = model.__name__ + "ListRes"
 
-class CreateMixin(PostMixin):
+        class R2(ListOk):
+            data: r1
 
-    def init(self, router: Union[APIRouter, FastAPI]):
-        @router.post(self.path, )
-        async def p(data):
-            pass
+        r2 = R2
+        r2.__name__ = model.__name__ + "AmisList"
+        return r2
 
+    class RetrieveMixin(GetMixin):
+        pass
 
-class DestoryMixin(PostMixin):
-    pass
+    class CreateMixin(PostMixin):
 
-class ModelAdmin(ListLimitOffsetMixin, ):
-    pass
+        def init(self, router: Union[APIRouter, FastAPI]):
+            @router.post(self.path, )
+            async def p(data):
+                pass
+
+    class DestoryMixin(PostMixin):
+        pass

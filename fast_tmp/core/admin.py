@@ -204,23 +204,7 @@ admin_app = AdminApp(
     root_path="/admin",
     description="FastAPI Admin Dashboard based on FastAPI and Tortoise ORM.",
 )
-from .mixins import ListLimitOffsetMixin
+from .mixins import AimsListMixin
 
-x = ListLimitOffsetMixin(path="/list", prefix="dd", search_classes=('name',), model="Team")
-x2 = ListLimitOffsetMixin(path='/list2', prefix="d2", model='Author')
-admin_app.register_mixin(x)
-admin_app.register_mixin(x2)
 
 from fast_tmp.utils.openapi import get_openapi
-
-print(admin_app.request_element_type)
-admin_app.openapi_schema = get_openapi(
-    title=admin_app.title,
-    version=admin_app.version,
-    request_elenemt_type=admin_app.request_element_type,
-    openapi_version=admin_app.openapi_version,
-    description=admin_app.description,
-    routes=admin_app.routes,
-    tags=admin_app.openapi_tags,
-    servers=admin_app.servers,
-)
