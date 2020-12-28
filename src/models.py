@@ -1,4 +1,5 @@
 from tortoise import Model, fields
+
 # from fast_tmp.models import User, Group, Permission
 from src.enums import Status
 

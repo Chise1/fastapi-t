@@ -20,6 +20,19 @@ url = "https://mirrors.aliyun.com/pypi/simple"
 reference = "aliyun"
 
 [[package]]
+name = "aiofiles"
+version = "0.6.0"
+description = "File support for asyncio."
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.source]
+type = "legacy"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "aliyun"
+
+[[package]]
 name = "aiomysql"
 version = "0.0.21"
 description = "MySQL driver for asyncio."
@@ -1397,12 +1410,16 @@ reference = "aliyun"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "2ce5c4bfc95bacd32d0012e91703785268f0a0083729a94d4476ea1d317e1c4c"
+content-hash = "0808353addc9f44f2fd64e45a1eeeded12350fda73d650f3f55d7e3d37695dd4"
 
 [metadata.files]
 aerich = [
     {file = "aerich-0.4.2-py3-none-any.whl", hash = "sha256:6301dce12700241ac944b4d1cbf7f1eac1742edad2bcb8194df79e5eac1fab65"},
     {file = "aerich-0.4.2.tar.gz", hash = "sha256:8215c334cab7157db37029138aa8a558692aa5a803f6dfe8cffa99ce992eecd6"},
+]
+aiofiles = [
+    {file = "aiofiles-0.6.0-py3-none-any.whl", hash = "sha256:bd3019af67f83b739f8e4053c6c0512a7f545b9a8d91aaeab55e6e0f9d123c27"},
+    {file = "aiofiles-0.6.0.tar.gz", hash = "sha256:e0281b157d3d5d59d803e3f4557dcc9a3dff28a4dd4829a9ff478adae50ca092"},
 ]
 aiomysql = [
     {file = "aiomysql-0.0.21-py3-none-any.whl", hash = "sha256:a81a97da3dd732635926a8ea6adbbf2d1345799680bf61b5f89e730bcec88cc5"},

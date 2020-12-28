@@ -15,6 +15,7 @@ fastapi-admin = "^0.3.2"
 python-jose = "*"
 #fast-tmp= {git = "https://github.com/Chise1/fast-tmp.git"}
 
+aiofiles = "^0.6.0"
 [tool.poetry.dev-dependencies]
 flake8 = "*"
 isort = "*"

@@ -49,10 +49,16 @@ TORTOISE_ORM = {
             },
         },
     },
-    "apps": {
+    "apps": {  # fixme:考虑多个app的时候的数据库迁移和管理功能
         "models": {
-            "models": ['fast_tmp.models', "src.models", "aerich.models", ],
+            "models": [
+                "fast_tmp.models",
+                "src.models",
+                "aerich.models",
+            ],
             "default_connection": "default",
         },
     },
 }
+STATIC_ROOT = "static"
+SERVER_URL = "127.0.0.1:8000"  # 配置前端页面请求地址
