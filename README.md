@@ -1,3 +1,4 @@
 # fastapi-t
 模板
 一个重大的突破，成功使用amis动态渲染后端管理页面模板
+准备创建Admin对mixin进行获取json的操作
