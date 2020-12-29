@@ -136,7 +136,8 @@ async def create_user(user: UserCreateSchema):
 from fastapi import Request
 from fastapi.responses import HTMLResponse
 
-x = AimsListMixin(path="/list", prefix="dd", search_classes=('name',), model="User", app_label='models')
+x = AimsListMixin(path="/list", prefix="dd", search_classes=('name',), model="User", app_label='models',
+                  exclude=['permissions', 'groups'])
 x.init(auth_router)
 
 

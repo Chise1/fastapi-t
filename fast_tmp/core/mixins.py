@@ -144,39 +144,39 @@ class AimsListMixin(ListMixin):
             for k, v in filter_fields.items():
                 if v:
                     queryset = queryset.filter(**{k: v})
-            ds: List[Model] = await queryset
-            dr = []
-            for d in ds:
-                dr.append(d.__dict__)
+
             return {
-                "count": count,
-                "data": dr
+                "total": count,
+                "items":await self.get_orm_list_schema(model).from_queryset(queryset)
             }
 
         f.__name__ = self.model + "_aims_list_mixin"
-        print("1")
         router.get(self.path, response_model=self.get_response_schema())(f)
         return f
 
-    def get_response_schema(self):
-        model = self.get_model()
-        # fixme:考虑多对多一对多等字段的显示问题
-        model_name = model.__name__ + "AmisList"
-        if _SCHEMA_DICT.get(model_name, None):
-            return _SCHEMA_DICT.get(model_name)
+    def get_orm_list_schema(self, model):
         if self.include:
-            res_model = pydantic_model_creator(model, name=model.__name__ + "AdminList", include=self.include)
+            res_model = pydantic_queryset_creator(model, name=model.__name__ + "AdminList", include=self.include)
         elif self.exclude:
-            res_model = pydantic_model_creator(model, name=model.__name__ + "AdminList", exclude=self.exclude)
+            res_model = pydantic_queryset_creator(model, name=model.__name__ + "AdminList", exclude=self.exclude)
         else:
-            res_model = pydantic_model_creator(model, name=model.__name__ + "AdminList", )
+            res_model = pydantic_queryset_creator(model, name=model.__name__ + "AdminList", )
+        return res_model
+
+    def get_response_schema(self):
+        # fixme:考虑多对多一对多等字段的显示问题
+        model = self.get_model()
+        schema_name = model.__name__ + "AmisList"
+        if _SCHEMA_DICT.get(schema_name, None):
+            return _SCHEMA_DICT.get(schema_name)
+        res_model = self.get_orm_list_schema(model)
         properties = {
             "__annotations__": {
                 "total": int,
-                "items": List[res_model]
+                "items": res_model
             }
         }
-        return cast(Type[PydanticModel], type(model_name, (PydanticModel,), properties))
+        return cast(Type[PydanticModel], type(schema_name, (PydanticModel,), properties))
 
 
 class RetrieveMixin(GetMixin):
