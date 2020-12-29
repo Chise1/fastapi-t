@@ -1,18 +1,23 @@
 from enum import Enum
 from typing import (Any, Callable, Dict, Iterable, List, Optional, Tuple, Type,
-                    Union)
+                    Union, cast)
 
 from fastapi import APIRouter, Depends, FastAPI
 from pydantic import BaseModel
-from tortoise.contrib.pydantic import pydantic_model_creator, pydantic_queryset_creator
+from tortoise import Model
+from tortoise.contrib.pydantic import pydantic_model_creator, pydantic_queryset_creator, PydanticModel
 from tortoise.query_utils import Q
 
 from fast_tmp.choices import ElementType, Method
 from ..schema.response import ListOk
 
 from ..utils.model import get_model_from_str
-from .filter import DependField, SearchValue, filter_depend, search_depend
+from .filter import DependField, filter_depend, search_depend
 from .page import AmisPaginator, amis_paginator
+
+res_model = pydantic_model_creator(get_model_from_str("models.User"),
+                                   name=get_model_from_str("User").__name__ + "AdminList", )
+_SCHEMA_DICT: Dict[str, Type[BaseModel]] = {}
 
 
 class RequestMixin(BaseModel):
@@ -128,7 +133,7 @@ class AimsListMixin(ListMixin):
                 search_field: Optional[str] = Depends(search_depend),
                 filter_fields: dict = Depends(filter_depend(self.get_filter_fields()))):
             model = self.get_model()
-            count = await model.all().count()
+            count = await self.get_queryset().count()
             queryset = model.all().limit(page.perPage).offset(page.perPage * (page.page - 1))
             q = Q()
             # 搜索功能
@@ -139,49 +144,52 @@ class AimsListMixin(ListMixin):
             for k, v in filter_fields.items():
                 if v:
                     queryset = queryset.filter(**{k: v})
+            ds: List[Model] = await queryset
+            dr = []
+            for d in ds:
+                dr.append(d.__dict__)
             return {
                 "count": count,
-                "data": await queryset
+                "data": dr
             }
 
         f.__name__ = self.model + "_aims_list_mixin"
+        print("1")
         router.get(self.path, response_model=self.get_response_schema())(f)
         return f
 
     def get_response_schema(self):
         model = self.get_model()
         # fixme:考虑多对多一对多等字段的显示问题
+        model_name = model.__name__ + "AmisList"
+        if _SCHEMA_DICT.get(model_name, None):
+            return _SCHEMA_DICT.get(model_name)
         if self.include:
-            res_model = pydantic_queryset_creator(model, name=model.__name__ + "AdminList", include=self.include)
+            res_model = pydantic_model_creator(model, name=model.__name__ + "AdminList", include=self.include)
         elif self.exclude:
-            res_model = pydantic_queryset_creator(model, name=model.__name__ + "AdminList", exclude=self.exclude)
+            res_model = pydantic_model_creator(model, name=model.__name__ + "AdminList", exclude=self.exclude)
         else:
-            res_model = pydantic_queryset_creator(model, name=model.__name__ + "AdminList", )
+            res_model = pydantic_model_creator(model, name=model.__name__ + "AdminList", )
+        properties = {
+            "__annotations__": {
+                "total": int,
+                "items": List[res_model]
+            }
+        }
+        return cast(Type[PydanticModel], type(model_name, (PydanticModel,), properties))
 
-        class ResModel(BaseModel):
-            total: int
-            items: res_model
 
-        # todo:这里需要动态生成Schema
-        r1 = ResModel
-        r1.__name__ = model.__name__ + "ListRes"
+class RetrieveMixin(GetMixin):
+    pass
 
-        class R2(ListOk):
-            data: r1
 
-        r2 = R2
-        r2.__name__ = model.__name__ + "AmisList"
-        return r2
+class CreateMixin(PostMixin):
 
-    class RetrieveMixin(GetMixin):
-        pass
+    def init(self, router: Union[APIRouter, FastAPI]):
+        @router.post(self.path, )
+        async def p(data):
+            pass
 
-    class CreateMixin(PostMixin):
 
-        def init(self, router: Union[APIRouter, FastAPI]):
-            @router.post(self.path, )
-            async def p(data):
-                pass
-
-    class DestoryMixin(PostMixin):
-        pass
+class DestoryMixin(PostMixin):
+    pass

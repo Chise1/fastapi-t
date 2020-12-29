@@ -136,9 +136,7 @@ async def create_user(user: UserCreateSchema):
 from fastapi import Request
 from fastapi.responses import HTMLResponse
 
-x = AimsListMixin(path="/list", prefix="dd", search_classes=('name',), model="User",app_label='models')
-x2 = AimsListMixin(path='/list2', prefix="d2", model='Permission',app_label='models')
-x.init(auth_router)
+x = AimsListMixin(path="/list", prefix="dd", search_classes=('name',), model="User", app_label='models')
 x.init(auth_router)
 
 
@@ -178,3 +176,8 @@ async def template(request: Request, ):
         }
     }
     return templates.TemplateResponse("admin/crud.html", {"request": request, "page": str(json.dumps(page))})
+
+
+@auth_router.get("/test")
+async def test_t():
+    return {"code": 200}

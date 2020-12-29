@@ -1,11 +1,14 @@
+import json
 import os
 import sys
+from typing import Any
+
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 from fastapi.staticfiles import StaticFiles
 from starlette import status
-from starlette.responses import JSONResponse
+from starlette.responses import JSONResponse, PlainTextResponse
 from starlette.status import HTTP_401_UNAUTHORIZED
 
 from fast_tmp.api.auth import auth_router
@@ -38,6 +41,37 @@ async def http_exception_handler(request: Request, exc: HTTPException):
     # return AesResponse(ret)
 
 
+#
+# class DefaultResponse(PlainTextResponse):  # 设置默认返回值
+#     def render(self, content: Any) -> bytes:
+#         res = {
+#             'status': 0,
+#             'msg': '',
+#             'data': content
+#         }
+#         content = json.dumps(res)
+#         # if not settings.DEBUG:
+#         #     return aes.encrypt_data(content).encode()
+#         self.media_type = "application/json"
+#         return super(DefaultResponse, self).render(content)
+class DefaultResponse(JSONResponse):
+    media_type = "application/json"
+
+    def render(self, content: Any) -> bytes:
+        res = {
+            'status': 0,
+            'msg': '',
+            'data': content
+        }
+        return json.dumps(
+            res,
+            ensure_ascii=False,
+            allow_nan=False,
+            indent=None,
+            separators=(",", ":"),
+        ).encode("utf-8")
+
+
 # fixme:等待启用
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
     return JSONResponse(
@@ -53,7 +87,8 @@ async def error_exception_handler(request: Request, exc: ErrorException):
 
 
 def create_fast_tmp_app():
-    fast_tmp_app = FastAPI(debug=settings.DEBUG)
+    fast_tmp_app = FastAPI(debug=settings.DEBUG,
+                           default_response_class=DefaultResponse)
     if settings.DEBUG:
         fast_tmp_app.mount("/static", StaticFiles(directory=os.path.join(DIR, "static")), name="static")
     else:
