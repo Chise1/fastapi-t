@@ -9,7 +9,7 @@
             content="width=device-width, initial-scale=1, maximum-scale=1"
     />
     <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
-    <link rel="stylesheet" href="http://127.0.0.1:8000/static/./sdk.css"/>
+    <link rel="stylesheet" href="http://127.0.0.1:8000/admin/static/sdk.css"/>
     <style>
         html,
         body,
@@ -24,47 +24,24 @@
 </head>
 <body>
 <div id="root" class="app-wrapper"></div>
-<script src="http://127.0.0.1:8000/static/sdk.js"></script>
+<script src="http://127.0.0.1:8000/admin/static/sdk.js"></script>
 <script type="text/javascript">
- +(function () {
-    let amis = amisRequire('amis/embed');
-    // 通过替换下面这个配置来生成不同页面
-
-    let amisScoped = amis.embed('#root',
+      (function () {
+        let amis = amisRequire('amis/embed');
+        // 通过替换下面这个配置来生成不同页面
+        let amisScoped = amis.embed('#root',
         {
-            "type": "page",
-            "body": {
-                "type": "crud",
-                "api": "https://houtai.baidu.com/api/sample",
-                "columns": [
-                    {
-                        "name": "id",
-                        "label": "ID"
-                    },
-                    {
-                        "name": "engine",
-                        "label": "Rendering engine"
-                    },
-                    {
-                        "name": "browser",
-                        "label": "Browser"
-                    },
-                    {
-                        "name": "platform",
-                        "label": "Platform(s)"
-                    },
-                    {
-                        "name": "version",
-                        "label": "Engine version"
-                    },
-                    {
-                        "name": "grade",
-                        "label": "CSS grade"
-                    }
-                ]
-            }
-        })
-})()
+        "type": "page",
+        "body":
+        [
+        {"type": "crud", "api": "http://127.0.0.1:8000/admin/auth/list",
+        "columns": [
+        {"name": "username", "label": "Username"}, {"name": "password", "label": "Password"}, {"name": "is_active", "label": "Is Active"}, {"name": "is_superuser", "label": "Is Superuser"}]}]})}
+        )();
+
+
+
+
 </script>
 </body>
 </html>

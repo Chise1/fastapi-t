@@ -1,14 +1,18 @@
 import json
 from datetime import datetime
-from typing import Optional
+from typing import Optional, Type
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import Depends, HTTPException, status
+from fastapi.responses import HTMLResponse
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
 from pydantic import BaseModel
+from starlette.requests import Request
 
 from fast_tmp.conf import settings
+from fast_tmp.core.amis_router import AmisRouter
 from fast_tmp.core.mixins import AimsListMixin
+from fast_tmp.models import AbstractUser
 from fast_tmp.schema import UserCreateSchema
 from fast_tmp.templates_app import templates
 from fast_tmp.utils.model import get_model_from_str
@@ -16,7 +20,7 @@ from fast_tmp.utils.model import get_model_from_str
 SECRET_KEY = settings.SECRET_KEY
 ALGORITHM = settings.ALGORITHM
 ACCESS_TOKEN_EXPIRE_MINUTES = settings.EXPIRES_DELTA
-User = get_model_from_str(settings.AUTH_USER_MODEL)
+User: Type[AbstractUser] = get_model_from_str(settings.AUTH_USER_MODEL)
 
 
 class AccessTokenInfo(BaseModel):
@@ -41,15 +45,15 @@ class TokenData(BaseModel):
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")
 
-auth_router = APIRouter()
+auth_router = AmisRouter(prefix="/auth")
 
 
-async def get_user(username: str) -> Optional[User]:
+async def get_user(username: str) -> Optional[AbstractUser]:
     user = await User.filter(username=username).first()
     return user
 
 
-async def authenticate_user(username: str, password: str) -> Optional[User]:
+async def authenticate_user(username: str, password: str) -> Optional[AbstractUser]:
     user = await get_user(username)
     if not user:
         return None
@@ -74,7 +78,7 @@ def create_access_token(data: AccessTokenInfo):
     return encoded_jwt
 
 
-async def get_current_user(token: str = Depends(oauth2_scheme)) -> User:
+async def get_current_user(token: str = Depends(oauth2_scheme)) -> AbstractUser:
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -88,13 +92,15 @@ async def get_current_user(token: str = Depends(oauth2_scheme)) -> User:
         token_data = TokenData(username=username)
     except JWTError:
         raise credentials_exception
-    user = await get_user(username=token_data.username)
+    user: AbstractUser = await get_user(username=token_data.username)
     if user is None:
         raise credentials_exception
     return user
 
 
-async def get_current_active_user(current_user: User = Depends(get_current_user)) -> User:
+async def get_current_active_user(
+    current_user: AbstractUser = Depends(get_current_user),
+) -> AbstractUser:
     if not current_user.is_active:
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
@@ -116,12 +122,12 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
 
 
 @auth_router.get("/users/me/", response_model=UserSchema)
-async def read_users_me(current_user: User = Depends(get_current_active_user)):
+async def read_users_me(current_user: AbstractUser = Depends(get_current_active_user)):
     return current_user
 
 
 @auth_router.get("/users/me/items/")
-async def read_own_items(current_user: User = Depends(get_current_active_user)):
+async def read_own_items(current_user: AbstractUser = Depends(get_current_active_user)):
     return [{"item_id": "Foo", "owner": current_user.username}]
 
 
@@ -133,14 +139,10 @@ async def create_user(user: UserCreateSchema):
     return u
 
 
-from fastapi import Request
-from fastapi.responses import HTMLResponse
-
 x = AimsListMixin(
     path="/list",
-    prefix="dd",
     search_classes=("name",),
-    model="User",
+    model_str="User",
     app_label="models",
     exclude=["permissions", "groups"],
 )
@@ -171,6 +173,13 @@ async def template(
     )
 
 
-@auth_router.get("/test")
-async def test_t():
-    return {"code": 200}
+@auth_router.get("/template2", response_class=HTMLResponse)
+async def template(
+    request: Request,
+):
+    return templates.TemplateResponse(
+        "admin/t.html",
+        {
+            "request": request,
+        },
+    )

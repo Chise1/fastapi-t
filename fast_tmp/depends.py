@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional
+from typing import Optional, Type
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
@@ -7,7 +7,10 @@ from jose import JWTError, jwt
 from pydantic import BaseModel
 
 from fast_tmp.conf import settings
+from fast_tmp.models import AbstractUser
 from fast_tmp.utils.model import get_model_from_str
+
+User: AbstractUser = get_model_from_str(settings.AUTH_USER_MODEL)  # noqa
 
 
 class Token(BaseModel):
@@ -83,6 +86,6 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
 
 
 async def get_current_active_user(current_user: User = Depends(get_current_user)):
-    if current_user.disabled:
+    if not current_user.is_active:
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user

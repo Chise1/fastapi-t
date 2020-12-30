@@ -1,20 +1,16 @@
-import json
 import os
 import sys
-from typing import Any
 
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, Request
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 from fastapi.staticfiles import StaticFiles
 from starlette import status
-from starlette.responses import JSONResponse, PlainTextResponse
-from starlette.status import HTTP_401_UNAUTHORIZED
+from starlette.responses import JSONResponse
 
 from fast_tmp.api.auth import auth_router
 from fast_tmp.api.auth2 import auth2_router
 from fast_tmp.conf import settings
-from src.apps.api import ErrorException
 
 paths = sys.path
 
@@ -26,49 +22,11 @@ def get_dir():
 DIR = get_dir()
 
 
-# fixme:等待启用
-async def http_exception_handler(request: Request, exc: HTTPException):
-    print(exc.status_code)
-    return exc
-    # if exc.status_code == HTTP_401_UNAUTHORIZED:
-    #     ret = TokenInvalid(msg=exc.detail).dict()
-    # elif exc.status_code == HTTP_403_FORBIDDEN:
-    #     ret = Forbidden(msg=exc.detail).dict()
-    # else:
-    #     logger.error(f"HTTPException: {exc.detail}", exc_info=True)
-    #     ret = UnKnownError(msg=exc.detail).dict()
-    # if settings.DEBUG:
-    #     return ORJSONResponse(ret)
-    # return AesResponse(ret)
-
-
-#
-# class DefaultResponse(PlainTextResponse):  # 设置默认返回值
-#     def render(self, content: Any) -> bytes:
-#         res = {
-#             'status': 0,
-#             'msg': '',
-#             'data': content
-#         }
-#         content = json.dumps(res)
-#         # if not settings.DEBUG:
-#         #     return aes.encrypt_data(content).encode()
-#         self.media_type = "application/json"
-#         return super(DefaultResponse, self).render(content)
-
-
-# fixme:等待启用
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
     return JSONResponse(
         status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
         content=jsonable_encoder({"detail": exc.errors(), "body": exc.body}),
     )
-
-
-# fixme:等待启用
-async def error_exception_handler(request: Request, exc: ErrorException):
-    print(exc)
-    return exc
 
 
 def create_fast_tmp_app():

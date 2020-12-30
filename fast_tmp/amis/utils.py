@@ -1,4 +1,4 @@
-from typing import List, Type
+from typing import List, Tuple, Type
 
 from pydantic.main import BaseModel
 from pydantic.schema import schema
@@ -7,7 +7,7 @@ from fast_tmp.amis.schema.widgets import Column
 
 
 def get_coulmns_from_pqc(
-    list_schema: Type[BaseModel], include: List[str] = None, exclude: List[str] = None
+    list_schema: Type[BaseModel], include: Tuple[str, ...] = None, exclude: Tuple[str, ...] = None
 ):
     """
     从pydantic_queryset_creator创建的schema获取字段

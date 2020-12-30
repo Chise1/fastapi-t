@@ -2,9 +2,9 @@ from typing import List, Union
 
 from pydantic import HttpUrl
 
-from . import BaseAmisModel, TypeEnum
-from .actions import _Action
-from .widgets import Column
+from fast_tmp.amis.schema.abstract_schema import BaseAmisModel, _Action
+from fast_tmp.amis.schema.enums import TypeEnum
+from fast_tmp.amis.schema.widgets import Column
 
 
 class CRUD(BaseAmisModel):

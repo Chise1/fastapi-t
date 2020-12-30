@@ -1,7 +1,15 @@
-from typing import Optional
+from typing import Optional, TypeVar
 
-from . import BaseAmisModel
-from .enums import ActionTypeEnum, ButtonLevelEnum, ButtonSize, TypeEnum
+from pydantic.main import BaseModel
+
+from fast_tmp.amis.schema.enums import ActionTypeEnum, ButtonLevelEnum, ButtonSize, TypeEnum
+
+
+class BaseAmisModel(BaseModel):
+    type: TypeEnum
+
+
+AmisModel = TypeVar("AmisModel", bound=BaseAmisModel)
 
 
 class _Action(BaseAmisModel):

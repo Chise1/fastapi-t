@@ -13,7 +13,7 @@ from starlette.routing import BaseRoute
 from starlette.routing import Mount as Mount  # noqa
 from starlette.types import ASGIApp
 
-from fast_tmp.amis.schema import BaseAmisModel
+from fast_tmp.amis.schema.abstract_schema import BaseAmisModel
 from fast_tmp.amis.schema.page import Page
 from fast_tmp.responses import AmisResponse
 from fast_tmp.templates_app import templates

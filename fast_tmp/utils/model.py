@@ -1,9 +1,11 @@
-from typing import Type
+from typing import Iterator, Type, TypeVar
 
 from tortoise import Model, Tortoise
 
+TModel = TypeVar("TModel", bound=Model)
 
-def get_all_models():
+
+def get_all_models() -> Iterator[TModel]:
     """
     get all tortoise models
     :return:
@@ -13,7 +15,7 @@ def get_all_models():
             yield model_item
 
 
-def get_model_from_str(model_name: str, app_label: str = "models") -> Type[Model]:
+def get_model_from_str(model_name: str, app_label: str = "models") -> Type[TModel]:
     s = model_name.split(".")
     if len(s) == 2:
         app_label, model_name = s
