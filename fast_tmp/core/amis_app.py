@@ -1,28 +1,10 @@
-from typing import Any, Callable, Coroutine, Dict, List, Optional, Sequence, Type, Union
+from typing import Any, Dict, List, Optional, Sequence, Type, Union
 
 from fastapi import FastAPI, routing
-from fastapi.concurrency import AsyncExitStack
-from fastapi.datastructures import Default, DefaultPlaceholder
-from fastapi.encoders import DictIntStrAny, SetIntStr
-from fastapi.exception_handlers import http_exception_handler, request_validation_exception_handler
-from fastapi.exceptions import RequestValidationError
-from fastapi.logger import logger
-from fastapi.openapi.docs import (
-    get_redoc_html,
-    get_swagger_ui_html,
-    get_swagger_ui_oauth2_redirect_html,
-)
-from fastapi.openapi.utils import get_openapi
+from fastapi.datastructures import Default
 from fastapi.params import Depends
-from fastapi.types import DecoratedCallable
-from starlette.applications import Starlette
-from starlette.datastructures import State
-from starlette.exceptions import HTTPException
-from starlette.middleware import Middleware
-from starlette.requests import Request
-from starlette.responses import HTMLResponse, JSONResponse, Response
+from starlette.responses import JSONResponse, Response
 from starlette.routing import BaseRoute
-from starlette.types import ASGIApp, Receive, Scope, Send
 
 
 class AmisAPI(FastAPI):

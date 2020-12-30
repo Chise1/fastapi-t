@@ -1,6 +1,6 @@
-import logging
+# fixme:配合日志
+# import logging
 import os
-import sys
 
 from dotenv import load_dotenv
 

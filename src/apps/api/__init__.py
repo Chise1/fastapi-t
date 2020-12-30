@@ -6,11 +6,9 @@ from starlette.requests import Request
 from starlette.status import HTTP_401_UNAUTHORIZED, HTTP_403_FORBIDDEN
 
 from fast_tmp.conf import settings
+from src.apps.api.errors import Forbidden, TokenInvalid, UnKnownError
+from src.apps.api.routes import api_router
 from src.common import get_docs_description
-
-from .errors import Forbidden, TokenInvalid, UnKnownError, UserBaned
-from .exceptions import ErrorException, UserBanedError
-from .routes import api_router
 
 logger = logging.getLogger("src.api")
 

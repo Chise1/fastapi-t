@@ -1,5 +1,4 @@
 import json
-from typing import Type
 
 from pydantic.main import BaseModel
 from pydantic.schema import schema
