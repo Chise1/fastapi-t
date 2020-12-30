@@ -6,14 +6,14 @@ from pydantic.schema import schema
 from fast_tmp.amis.schema.widgets import Column
 
 
-def get_coulmns_from_list_schema(
-    res_schema: Type[BaseModel], include: List[str] = None, exclude: List[str] = None
+def get_coulmns_from_pqc(
+    list_schema: Type[BaseModel], include: List[str] = None, exclude: List[str] = None
 ):
     """
-    从model获取字段
+    从pydantic_queryset_creator创建的schema获取字段
     """
-    model_name = res_schema.__name__
-    json_models = schema([res_schema])["definitions"]
+    model_name = list_schema.__name__
+    json_models = schema([list_schema])["definitions"]
     res: List[Column] = []
     for json_model in json_models:
         if json_model == model_name:
@@ -33,7 +33,25 @@ def get_coulmns_from_list_schema(
     return res
 
 
-def get_columns(fields: List[str]) -> List[Column]:
+def get_coulmns_from_pmc(
+    model_schema: Type[BaseModel], include: List[str] = None, exclude: List[str] = None
+):
+    """
+    从pydantic_model_creator创建的schema获取字段
+    """
+    model_name = model_schema.__name__
+    json_models = schema([model_schema])["definitions"]
+    res: List[Column] = []
+    for json_model in json_models:
+        if json_model == model_name:
+            items = json_models[json_model]["properties"]
+            for k, v in items.items():
+                res.append(Column(name=k, label=v["title"]))
+            break
+    return res
+
+
+def get_columns_from_str(fields: List[str]) -> List[Column]:
     res = []
     for field in fields:
         res.append(Column(name=field, label=field))

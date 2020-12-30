@@ -1,5 +1,7 @@
 from typing import List, Union
 
+from pydantic.main import BaseModel
+
 from fast_tmp.amis.schema import BaseAmisModel
 
 from .enums import TypeEnum
