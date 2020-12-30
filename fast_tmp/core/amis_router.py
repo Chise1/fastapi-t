@@ -69,7 +69,7 @@ class AmisRouter(routing.Router):
         self.dependency_overrides_provider = dependency_overrides_provider
         self.route_class = route_class
         self.default_response_class = default_response_class
-        self.get("/html", response_class=HTMLResponse)(admin_template(self.page))
+        self.get("/html", response_class=HTMLResponse)(admin_template(self))
 
     def add_api_route(
         self,
@@ -733,8 +733,8 @@ class AmisRouter(routing.Router):
 
 
 class admin_template:
-    def __init__(self, page: BaseAmisModel):
-        self.page = page
+    def __init__(self, router: AmisRouter):
+        self.router = router
 
     # todo:学习如何给jinja2增加缓存功能
     def __call__(
@@ -742,9 +742,9 @@ class admin_template:
         request: Request,
     ):
         return templates.TemplateResponse(
-            "admin/base.html",
+            "admin/crud.html",
             {
                 "request": request,
-                "page": str(json.dumps(self.page.json())),
+                "page": self.router.page.json(),
             },  # fixme:ujson or orjson
         )

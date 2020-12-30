@@ -15,5 +15,3 @@ x = AmisList(
         ],
     )
 )
-print(x.dict())
-print(x.json())

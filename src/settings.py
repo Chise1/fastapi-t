@@ -61,4 +61,4 @@ TORTOISE_ORM = {
     },
 }
 STATIC_ROOT = "static"
-SERVER_URL = "127.0.0.1:8000"  # 配置前端页面请求地址
+SERVER_URL = "http://127.0.0.1:8000"  # 配置前端页面请求地址
