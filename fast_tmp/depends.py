@@ -17,7 +17,9 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     username: Optional[str] = None
-#todo:重构
+
+
+# todo:重构
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
@@ -31,6 +33,7 @@ async def get_user(username: str):
 
 
 # fixme:修复返回类型
+
 
 def authenticate_user(username: str, password: str):
     """
@@ -55,8 +58,8 @@ def create_token(data: TokenInfo):
     return encoded_jwt
 
 
-def parse_token(token: str)->str:
-    credentials_exception=HTTPException(
+def parse_token(token: str) -> str:
+    credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
         headers={"WWW-Authenticate": "Bearer"},
@@ -70,9 +73,10 @@ def parse_token(token: str)->str:
     except JWTError:
         raise credentials_exception
 
+
 async def get_current_user(token: str = Depends(oauth2_scheme)):
-    username=parse_token(token)
-    user=get_user(username)
+    username = parse_token(token)
+    user = get_user(username)
     if user is None:
         raise credentials_exception
     return user

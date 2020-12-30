@@ -9,8 +9,8 @@ from pydantic import BaseModel
 
 from fast_tmp.conf import settings
 from fast_tmp.core.mixins import AimsListMixin
-from fast_tmp.templates_app import templates
 from fast_tmp.schema import UserCreateSchema
+from fast_tmp.templates_app import templates
 from fast_tmp.utils.model import get_model_from_str
 
 SECRET_KEY = settings.SECRET_KEY
@@ -136,47 +136,39 @@ async def create_user(user: UserCreateSchema):
 from fastapi import Request
 from fastapi.responses import HTMLResponse
 
-x = AimsListMixin(path="/list", prefix="dd", search_classes=('name',), model="User", app_label='models',
-                  exclude=['permissions', 'groups'])
+x = AimsListMixin(
+    path="/list",
+    prefix="dd",
+    search_classes=("name",),
+    model="User",
+    app_label="models",
+    exclude=["permissions", "groups"],
+)
 x.init(auth_router)
 
 
-@auth_router.get('/template', response_class=HTMLResponse)
-async def template(request: Request, ):
+@auth_router.get("/template", response_class=HTMLResponse)
+async def template(
+    request: Request,
+):
     page = {
         "type": "page",
         "body": {
             "type": "crud",
             "api": "https://houtai.baidu.com/api/sample",
             "columns": [
-                {
-                    "name": "id",
-                    "label": "ID"
-                },
-                {
-                    "name": "engine",
-                    "label": "Rendering engine"
-                },
-                {
-                    "name": "browser",
-                    "label": "Browser"
-                },
-                {
-                    "name": "platform",
-                    "label": "Platform(s)"
-                },
-                {
-                    "name": "version",
-                    "label": "Engine version"
-                },
-                {
-                    "name": "grade",
-                    "label": "CSS grade"
-                }
-            ]
-        }
+                {"name": "id", "label": "ID"},
+                {"name": "engine", "label": "Rendering engine"},
+                {"name": "browser", "label": "Browser"},
+                {"name": "platform", "label": "Platform(s)"},
+                {"name": "version", "label": "Engine version"},
+                {"name": "grade", "label": "CSS grade"},
+            ],
+        },
     }
-    return templates.TemplateResponse("admin/crud.html", {"request": request, "page": str(json.dumps(page))})
+    return templates.TemplateResponse(
+        "admin/crud.html", {"request": request, "page": str(json.dumps(page))}
+    )
 
 
 @auth_router.get("/test")

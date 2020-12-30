@@ -1,7 +1,9 @@
-from typing import Union, List
+from typing import List, Union
 
 from fast_tmp.amis.schema import BaseAmisModel
+
 from .enums import TypeEnum
+
 
 class Page(BaseAmisModel):
     type = TypeEnum.page

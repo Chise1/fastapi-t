@@ -204,7 +204,6 @@ admin_app = AdminApp(
     root_path="/admin",
     description="FastAPI Admin Dashboard based on FastAPI and Tortoise ORM.",
 )
-from .mixins import AimsListMixin
-
-
 from fast_tmp.utils.openapi import get_openapi
+
+from .mixins import AimsListMixin

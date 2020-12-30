@@ -1,5 +1,5 @@
 import inspect
-from typing import Any, List, Optional, Tuple, Type, Union, Callable
+from typing import Any, Callable, List, Optional, Tuple, Type, Union
 
 from pydantic.main import BaseModel
 
@@ -39,11 +39,16 @@ def filter_depend(fields: Tuple[Union[DependField, str], ...]) -> Callable:
     parameters = []
     for field in fields:
         if isinstance(field, DependField):
-            p = inspect.Parameter(field.field_name, kind=inspect.Parameter.KEYWORD_ONLY, default=None,
-                                  annotation=Optional[field.field_type])  # fixme:考虑一下枚举、数字、字符串、时间怎么区分？是否自动查询
+            p = inspect.Parameter(
+                field.field_name,
+                kind=inspect.Parameter.KEYWORD_ONLY,
+                default=None,
+                annotation=Optional[field.field_type],
+            )  # fixme:考虑一下枚举、数字、字符串、时间怎么区分？是否自动查询
         else:
-            p = inspect.Parameter(field, kind=inspect.Parameter.KEYWORD_ONLY, default=None,
-                                  annotation=Optional[str])  # fixme:考虑一下枚举、数字、字符串、时间怎么区分？是否自动查询
+            p = inspect.Parameter(
+                field, kind=inspect.Parameter.KEYWORD_ONLY, default=None, annotation=Optional[str]
+            )  # fixme:考虑一下枚举、数字、字符串、时间怎么区分？是否自动查询
         parameters.append(p)
     f.__signature__ = inspect.Signature(parameters=parameters, return_annotation=dict)  # 依赖
     return f

@@ -1,6 +1,8 @@
 from typing import List
+
 from pydantic import HttpUrl
-from . import TypeEnum, BaseAmisModel
+
+from . import BaseAmisModel, TypeEnum
 from .widgets import Column
 
 

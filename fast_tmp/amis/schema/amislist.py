@@ -1,8 +1,9 @@
 from pydantic.main import BaseModel
+
 from . import TypeEnum
 from .crud import CRUD
 
 
-class List(BaseModel):
+class AmisList(BaseModel):
     type = TypeEnum.page
     body: CRUD

@@ -1,22 +1,27 @@
 from enum import Enum
-from typing import (Any, Callable, Dict, Iterable, List, Optional, Tuple, Type,
-                    Union, cast)
+from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, Type, Union, cast
 
 from fastapi import APIRouter, Depends, FastAPI
 from pydantic import BaseModel
 from tortoise import Model
-from tortoise.contrib.pydantic import pydantic_model_creator, pydantic_queryset_creator, PydanticModel
+from tortoise.contrib.pydantic import (
+    PydanticModel,
+    pydantic_model_creator,
+    pydantic_queryset_creator,
+)
 from tortoise.query_utils import Q
 
 from fast_tmp.choices import ElementType, Method
-from ..schema.response import ListOk
 
+from ..schema.response import ListOk
 from ..utils.model import get_model_from_str
 from .filter import DependField, filter_depend, search_depend
 from .page import AmisPaginator, amis_paginator
 
-res_model = pydantic_model_creator(get_model_from_str("models.User"),
-                                   name=get_model_from_str("User").__name__ + "AdminList", )
+res_model = pydantic_model_creator(
+    get_model_from_str("models.User"),
+    name=get_model_from_str("User").__name__ + "AdminList",
+)
 _SCHEMA_DICT: Dict[str, Type[BaseModel]] = {}
 
 
@@ -24,13 +29,14 @@ class RequestMixin(BaseModel):
     """
     额外的请求混入
     """
+
     method: Method
     path: str
     prefix: str
     # detail: bool
     element_type: ElementType
     response_schema: Optional[BaseModel] = None
-    permissions: Tuple[Union[str, 'Permission'], ...] = ()  # todo:增加权限支持
+    permissions: Tuple[Union[str, "Permission"], ...] = ()  # todo:增加权限支持
     request_element_type: Dict[str, ElementType] = {}  # 记录请求的类型
 
     def __call__(self, *args, **kwargs):
@@ -88,7 +94,9 @@ class DeleteMixin(RequestMixin):
 
         f.__name__ = self.model + "_delete_mixin"
         self.request_element_type[f.__name__] = ElementType.Null
-        router.delete(self.path, )(f)
+        router.delete(
+            self.path,
+        )(f)
         return f
 
 
@@ -98,7 +106,7 @@ class ListMixin(GetMixin):
     search_fields: Tuple[str, ...] = ()
     order_fields: Tuple[str, ...] = ()  # fixme: 只支持单个排序
     model: str
-    app_label: str = 'models'
+    app_label: str = "models"
     include: Tuple[str, ...] = ()
     exclude: Tuple[str, ...] = ()  # 在include存在的情况下会忽略exclude
 
@@ -129,9 +137,10 @@ class AimsListMixin(ListMixin):
 
     def init(self, router: APIRouter):  # todo:等待测试
         async def f(
-                page: AmisPaginator = Depends(amis_paginator),
-                search_field: Optional[str] = Depends(search_depend),
-                filter_fields: dict = Depends(filter_depend(self.get_filter_fields()))):
+            page: AmisPaginator = Depends(amis_paginator),
+            search_field: Optional[str] = Depends(search_depend),
+            filter_fields: dict = Depends(filter_depend(self.get_filter_fields())),
+        ):
             model = self.get_model()
             count = await self.get_queryset().count()
             queryset = model.all().limit(page.perPage).offset(page.perPage * (page.page - 1))
@@ -147,7 +156,7 @@ class AimsListMixin(ListMixin):
 
             return {
                 "total": count,
-                "items":await self.get_orm_list_schema(model).from_queryset(queryset)
+                "items": await self.get_orm_list_schema(model).from_queryset(queryset),
             }
 
         f.__name__ = self.model + "_aims_list_mixin"
@@ -156,11 +165,18 @@ class AimsListMixin(ListMixin):
 
     def get_orm_list_schema(self, model):
         if self.include:
-            res_model = pydantic_queryset_creator(model, name=model.__name__ + "AdminList", include=self.include)
+            res_model = pydantic_queryset_creator(
+                model, name=model.__name__ + "AdminList", include=self.include
+            )
         elif self.exclude:
-            res_model = pydantic_queryset_creator(model, name=model.__name__ + "AdminList", exclude=self.exclude)
+            res_model = pydantic_queryset_creator(
+                model, name=model.__name__ + "AdminList", exclude=self.exclude
+            )
         else:
-            res_model = pydantic_queryset_creator(model, name=model.__name__ + "AdminList", )
+            res_model = pydantic_queryset_creator(
+                model,
+                name=model.__name__ + "AdminList",
+            )
         return res_model
 
     def get_response_schema(self):
@@ -170,12 +186,7 @@ class AimsListMixin(ListMixin):
         if _SCHEMA_DICT.get(schema_name, None):
             return _SCHEMA_DICT.get(schema_name)
         res_model = self.get_orm_list_schema(model)
-        properties = {
-            "__annotations__": {
-                "total": int,
-                "items": res_model
-            }
-        }
+        properties = {"__annotations__": {"total": int, "items": res_model}}
         return cast(Type[PydanticModel], type(schema_name, (PydanticModel,), properties))
 
 
@@ -184,9 +195,10 @@ class RetrieveMixin(GetMixin):
 
 
 class CreateMixin(PostMixin):
-
     def init(self, router: Union[APIRouter, FastAPI]):
-        @router.post(self.path, )
+        @router.post(
+            self.path,
+        )
         async def p(data):
             pass
 

@@ -3,7 +3,7 @@ import os
 import sys
 from typing import Any
 
-from fastapi import FastAPI, Request, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 from fastapi.staticfiles import StaticFiles
@@ -12,6 +12,7 @@ from starlette.responses import JSONResponse, PlainTextResponse
 from starlette.status import HTTP_401_UNAUTHORIZED
 
 from fast_tmp.api.auth import auth_router
+from fast_tmp.api.auth2 import auth2_router
 from fast_tmp.conf import settings
 from src.apps.api import ErrorException
 
@@ -54,22 +55,6 @@ async def http_exception_handler(request: Request, exc: HTTPException):
 #         #     return aes.encrypt_data(content).encode()
 #         self.media_type = "application/json"
 #         return super(DefaultResponse, self).render(content)
-class DefaultResponse(JSONResponse):
-    media_type = "application/json"
-
-    def render(self, content: Any) -> bytes:
-        res = {
-            'status': 0,
-            'msg': '',
-            'data': content
-        }
-        return json.dumps(
-            res,
-            ensure_ascii=False,
-            allow_nan=False,
-            indent=None,
-            separators=(",", ":"),
-        ).encode("utf-8")
 
 
 # fixme:等待启用
@@ -87,14 +72,19 @@ async def error_exception_handler(request: Request, exc: ErrorException):
 
 
 def create_fast_tmp_app():
-    fast_tmp_app = FastAPI(debug=settings.DEBUG,
-                           default_response_class=DefaultResponse)
+    fast_tmp_app = FastAPI(debug=settings.DEBUG)
     if settings.DEBUG:
-        fast_tmp_app.mount("/static", StaticFiles(directory=os.path.join(DIR, "static")), name="static")
+        fast_tmp_app.mount(
+            "/static", StaticFiles(directory=os.path.join(DIR, "static")), name="static"
+        )
     else:
-        fast_tmp_app.mount("/static", StaticFiles(directory=os.path.join(settings.BASE_DIR, settings.STATIC_ROOT)),
-                           name="static")
+        fast_tmp_app.mount(
+            "/static",
+            StaticFiles(directory=os.path.join(settings.BASE_DIR, settings.STATIC_ROOT)),
+            name="static",
+        )
     fast_tmp_app.include_router(auth_router)
+    fast_tmp_app.include_router(auth2_router)
     # fast_tmp_app.add_exception_handler(
     #     HTTPException, http_exception_handler
     # )

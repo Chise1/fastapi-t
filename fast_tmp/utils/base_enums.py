@@ -6,10 +6,11 @@ class Promise:
     Base class for the proxy class created in the closure of the lazy function.
     It's used to recognize promises in code.
     """
+
     pass
 
 
-__all__ = ['IntEnumType', 'CharEnumType']
+__all__ = ["IntEnumType", "CharEnumType"]
 
 
 class ChoicesMeta(enum.EnumMeta):
@@ -20,14 +21,14 @@ class ChoicesMeta(enum.EnumMeta):
         for key in classdict._member_names:
             value = classdict[key]
             if (
-                    isinstance(value, (list, tuple)) and
-                    len(value) > 1 and
-                    isinstance(value[-1], (Promise, str))
+                isinstance(value, (list, tuple))
+                and len(value) > 1
+                and isinstance(value[-1], (Promise, str))
             ):
                 *value, label = value
                 value = tuple(value)
             else:
-                label = key.replace('_', ' ').title()
+                label = key.replace("_", " ").title()
             labels.append(label)
             # Use dict.__setitem__() to suppress defenses against double
             # assignment in enum's classdict.
@@ -49,12 +50,12 @@ class ChoicesMeta(enum.EnumMeta):
 
     @property
     def names(cls):
-        empty = ['__empty__'] if hasattr(cls, '__empty__') else []
+        empty = ["__empty__"] if hasattr(cls, "__empty__") else []
         return empty + [member.name for member in cls]
 
     @property
     def choices(cls):
-        empty = [(None, cls.__empty__)] if hasattr(cls, '__empty__') else []
+        empty = [(None, cls.__empty__)] if hasattr(cls, "__empty__") else []
         t = empty + [(member.value, member.label) for member in cls]
         ret = {}
         for i in t:
@@ -83,6 +84,7 @@ class Choices(enum.Enum, metaclass=ChoicesMeta):
 
 class IntEnumType(int, Choices):
     """Class for creating enumerated integer choices."""
+
     pass
 
 

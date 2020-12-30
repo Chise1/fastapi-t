@@ -1,11 +1,11 @@
-
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from tortoise import Tortoise
 from tortoise.contrib.fastapi import register_tortoise
 
+from fast_tmp.conf import settings
 from fast_tmp.redis import AsyncRedisUtil
-from src import rearq, settings
+from src import rearq
 
 
 @rearq.on_startup
@@ -35,11 +35,12 @@ def init_app(main_app: FastAPI):
 def create_app():
     fast_app = FastAPI(debug=settings.DEBUG)
     Tortoise.init_models(settings.TORTOISE_ORM["apps"]["models"]["models"], "models")
-    from src.apps.api.routes import api_router
     from fast_tmp.factory import create_fast_tmp_app
+    from src.apps.api.routes import api_router
+
     fast_tmp_app = create_fast_tmp_app()
     fast_app.include_router(api_router, prefix="/api")
-    fast_app.mount("/auth", fast_tmp_app)
+    fast_app.mount(settings.ADMIN_URL, fast_tmp_app)
 
     # fixme:
     # 初始化tortoise的model结构之后再引入一些包

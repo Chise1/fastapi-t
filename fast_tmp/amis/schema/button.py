@@ -1,5 +1,5 @@
 from . import BaseAmisModel, TypeEnum
-from .enums import ActionTypeEnum,Ty
+from .enums import ActionTypeEnum, Ty
 
 
 class Button(BaseAmisModel):
