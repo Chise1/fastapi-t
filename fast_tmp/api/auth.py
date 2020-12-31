@@ -144,7 +144,7 @@ x = AimsListMixin(
     search_classes=("name",),
     model_str="User",
     app_label="models",
-    exclude=["permissions", "groups"],
+    exclude=["groups"],
 )
 x.init(auth_router)
 

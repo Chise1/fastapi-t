@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from pydantic.schema import schema
 from tortoise.contrib.pydantic import pydantic_queryset_creator
 
 from fast_tmp.amis.schema.crud import CRUD
@@ -21,7 +22,9 @@ class A(BaseModel):
     "/users",
     view=CRUD(
         api=settings.SERVER_URL + settings.ADMIN_URL + auth2_router.prefix + "/users",
-        columns=get_coulmns_from_pqc(users_schema),
+        columns=get_coulmns_from_pqc(
+            users_schema,
+        ),
     ),
     response_model=A,
 )
