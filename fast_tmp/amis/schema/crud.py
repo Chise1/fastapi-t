@@ -13,4 +13,4 @@ class CRUD(BaseAmisModel):
     # 可以在后面跟上按钮，则默认每一行都有按钮，
     # 参考：https://baidu.gitee.io/amis/docs/components/dialog?page=1
     columns: List[Union[Column, _Action]]
-    affixHeader: bool = False
+    # affixHeader: bool = False
