@@ -1,5 +1,4 @@
 from pydantic import BaseModel
-from pydantic.schema import schema
 from tortoise.contrib.pydantic import pydantic_queryset_creator
 
 from fast_tmp.amis.schema.crud import CRUD

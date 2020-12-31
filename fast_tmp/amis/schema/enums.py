@@ -51,6 +51,8 @@ class TypeEnum(str, Enum):
     button = "button"
     action = "action"  # 行为按钮
     form = "form"
+    hbox = "hbox"
+    nav = "nav"
 
 
 class ButtonSize(str, Enum):
