@@ -17,7 +17,7 @@ class Form(BaseAmisModel):
     # actions: Optional[List[_Action]]
     # messages: Optional[Message]#自定义返回信息加这个字段
     wrapWithPanel: bool = True
-    api: HttpUrl
-    initApi: Optional[HttpUrl]
+    api: str
+    initApi: Optional[str]
     # interval: int = 3000??
     primaryField: str = "id"  # 设置主键

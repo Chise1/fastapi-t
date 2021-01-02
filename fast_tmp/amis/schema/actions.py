@@ -4,7 +4,7 @@ from pydantic import HttpUrl
 from pydantic.main import BaseModel
 
 from .abstract_schema import _Action
-from .enums import ActionTypeEnum, ButtonLevelEnum
+from .enums import ActionTypeEnum, ButtonLevelEnum, TypeEnum
 from .frame import Dialog, Drawer
 
 
@@ -26,7 +26,7 @@ class AjaxAction(_Action):
 
     actionType = ActionTypeEnum.ajax
     confirmText: Optional[str] = None  # 如果配置了这个字段则会有弹出框提示
-    api: HttpUrl
+    api: str
     redirect: Optional[str] = None  # 如果配置路径，可以实现跳转
     feedback: Optional[FeedBack] = None
     # 如果重载需要携带参数，则可以输入：{"reload": "xxx?a=${a}&b=${b}"}
@@ -72,4 +72,5 @@ class DialogAction(_Action):
 
 class DrawerAction(_Action):
     actionType = ActionTypeEnum.drawer
-    dialog: Drawer
+    drawer: Drawer
+    # type = TypeEnum.button

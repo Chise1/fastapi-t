@@ -51,6 +51,7 @@ class TypeEnum(str, Enum):
     button = "button"
     action = "action"  # 行为按钮
     form = "form"
+    operation = "operation"  # 这是啥？？
 
 
 class WidgetSize:

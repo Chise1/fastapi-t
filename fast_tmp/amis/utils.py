@@ -12,9 +12,11 @@ def get_coulmns_from_pqc(
     include: Tuple[str, ...] = None,
     exclude: Tuple[str, ...] = None,
     add_type=False,
+    extra_fields=None,
 ):
     """
     从pydantic_queryset_creator创建的schema获取字段
+    extra_field:额外的自定义字段
     """
     model_name = list_schema.__name__
     json_models = schema([list_schema])["definitions"]
@@ -43,6 +45,8 @@ def get_coulmns_from_pqc(
                             )
                         else:
                             res.append(Column(name=field_name, label=fields[field_name]["title"]))
+    if extra_fields:
+        res.append(*extra_fields)
     return res
 
 
