@@ -8,12 +8,10 @@ load_dotenv()
 DEBUG = os.getenv("DEBUG") == "True"
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-API_SECRET = os.getenv("API_SECRET")
-ADMIN_SECRET = os.getenv("ADMIN_SECRET")
 SECRET_KEY = os.getenv("SECRET_KEY")
 REDIS_HOST = os.getenv("REDIS_HOST", "127.0.0.1")
 REDIS_PORT = os.getenv("REDIS_PORT", 6379)
-REDIS_PASSWORD = os.getenv("REDIS_PASSWORD")
+REDIS_PASSWORD = os.getenv("REDIS_PASSWORD", None)
 DB_HOST = os.getenv("DB_HOST", "127.0.0.1")
 DB_PORT = os.getenv("DB_PORT", 3306)
 DB_USER = os.getenv("DB_USER")

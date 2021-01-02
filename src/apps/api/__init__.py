@@ -7,7 +7,6 @@ from starlette.status import HTTP_401_UNAUTHORIZED, HTTP_403_FORBIDDEN
 
 from fast_tmp.conf import settings
 from src.apps.api.errors import Forbidden, TokenInvalid, UnKnownError
-from src.apps.api.routes import api_router
 from src.common import get_docs_description
 
 logger = logging.getLogger("src.api")
@@ -29,7 +28,5 @@ app = FastAPI(
     debug=settings.DEBUG,
     description=get_docs_description(),
 )
-app.include_router(
-    api_router,
-)
+
 app.add_exception_handler(HTTPException, http_exception_handler)

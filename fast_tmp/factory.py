@@ -22,13 +22,6 @@ def get_dir():
 DIR = get_dir()
 
 
-async def validation_exception_handler(request: Request, exc: RequestValidationError):
-    return JSONResponse(
-        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-        content=jsonable_encoder({"detail": exc.errors(), "body": exc.body}),
-    )
-
-
 def create_fast_tmp_app():
     fast_tmp_app = FastAPI(debug=settings.DEBUG)
     if settings.DEBUG:

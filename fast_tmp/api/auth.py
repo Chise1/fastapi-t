@@ -9,8 +9,8 @@ from jose import JWTError, jwt
 from pydantic import BaseModel
 from starlette.requests import Request
 
+from fast_tmp.amis_router import AmisRouter
 from fast_tmp.conf import settings
-from fast_tmp.core.amis_router import AmisRouter
 from fast_tmp.core.mixins import AimsListMixin
 from fast_tmp.models import AbstractUser
 from fast_tmp.schema import UserCreateSchema

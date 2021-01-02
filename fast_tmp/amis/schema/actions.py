@@ -60,9 +60,9 @@ class CopyAction(_Action):
     content: str  # 制定要复制的内容
 
 
-class ReloadAction(_Action):
-    type = ActionTypeEnum.reload
-    target: str  # 需要刷新的目标组件名字（组件的name值，自己配置的），多个请用 , 号隔开。
+# class ReloadAction(_Action):
+#     type = ActionTypeEnum.reload
+#     target: str  # 需要刷新的目标组件名字（组件的name值，自己配置的），多个请用 , 号隔开。
 
 
 class DialogAction(_Action):

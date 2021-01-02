@@ -9,9 +9,9 @@ from tortoise.query_utils import Q
 from fast_tmp.amis.schema.abstract_schema import AmisModel
 from fast_tmp.amis.schema.crud import CRUD
 from fast_tmp.amis.utils import get_coulmns_from_pqc
+from fast_tmp.amis_router import AmisRouter
 from fast_tmp.choices import ElementType, Method
 from fast_tmp.conf import settings
-from fast_tmp.core.amis_router import AmisRouter
 from fast_tmp.core.filter import DependField, filter_depend, search_depend
 from fast_tmp.core.page import AmisPaginator, amis_paginator
 from fast_tmp.utils.model import get_model_from_str
