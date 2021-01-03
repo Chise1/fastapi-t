@@ -4,12 +4,12 @@ from pydantic import HttpUrl
 
 from .abstract_schema import BaseAmisModel, Message, _Action
 from .enums import TypeEnum
-from .widgets import Control
+from .widgets import AbstractControl
 
 
 class Form(BaseAmisModel):
     type = TypeEnum.form
-    controls: List[Control]
+    controls: List[AbstractControl]
     name: str
     title: str = "表单"
     submitText: str = "提交"

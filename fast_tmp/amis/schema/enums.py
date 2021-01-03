@@ -93,9 +93,11 @@ class FormWidgetSize(
 
 class ControlEnum(str, Enum):
     text = "text"
+    switch = "switch"  # 开关
+    select = "select"
 
 
-class FormModel(str, Enum):
+class ItemModel(str, Enum):
     horizontal = "horizontal"
     inline = "inline"
     normal = "normal"
