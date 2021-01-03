@@ -6,6 +6,7 @@ from fastapi.encoders import DictIntStrAny, SetIntStr
 from fastapi.routing import APIRoute, APIWebSocketRoute
 from fastapi.types import DecoratedCallable
 from fastapi.utils import get_value_or_default
+from pydantic.schema import schema
 from starlette import routing
 from starlette.requests import Request
 from starlette.responses import HTMLResponse, JSONResponse, Response
@@ -740,6 +741,7 @@ class admin_template:
         self,
         request: Request,
     ):
+        print(self.router.page.json())
         return templates.TemplateResponse(
             "admin/crud.html",
             {

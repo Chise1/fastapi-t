@@ -3,8 +3,8 @@ from tortoise.contrib.pydantic import pydantic_queryset_creator
 
 from fast_tmp.amis.schema.crud import CRUD
 from fast_tmp.amis.utils import get_coulmns_from_pqc
+from fast_tmp.amis_router import AmisRouter
 from fast_tmp.conf import settings
-from fast_tmp.core.amis_router import AmisRouter
 from fast_tmp.utils.model import get_model_from_str
 
 User = get_model_from_str(settings.AUTH_USER_MODEL)

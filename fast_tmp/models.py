@@ -40,11 +40,8 @@ class AbstractUser(models.Model):
         abstract = True
 
 
-# 采用引用方式使用，只要再主models里面引入这三个model，就能创建对应表
-if settings.AUTH_USER_MODEL == "models.User":
-
-    class User(AbstractUser):
-        pass
+class User(AbstractUser):
+    pass
 
 
 class Permission(models.Model):
