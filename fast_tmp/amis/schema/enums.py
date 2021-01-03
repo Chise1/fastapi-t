@@ -55,6 +55,7 @@ class TypeEnum(str, Enum):
     hbox = "hbox"
     nav = "nav"
 
+
 class WidgetSize:
     lg = "lg"  # 大
     md = "md"  # 中,默认值
@@ -96,6 +97,7 @@ class ControlEnum(str, Enum):
     text = "text"
     switch = "switch"  # 开关
     select = "select"
+    number = "number"
 
 
 class ItemModel(str, Enum):

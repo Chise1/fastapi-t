@@ -74,7 +74,7 @@ class SelectOption(BaseModel):
 
 class SelectItem(Control):
     type = ControlEnum.select
-    options: List[Optional[SelectOption, str, int]]
+    options: Optional[List[Union[SelectOption, str, int]]]
     # children: Optional[List[Optional[SelectOption, str, int]]]#这个在树结构在考虑
     source: Optional[str]  # 通过数据源里面获取，也可以配置地址从远程获取，值格式为:options:[{label:..,value:...,}]
     multiple: bool = False  # 是否多选

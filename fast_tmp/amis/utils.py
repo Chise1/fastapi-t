@@ -4,6 +4,7 @@ from pydantic.main import BaseModel
 from pydantic.schema import schema
 from tortoise import Model
 
+from fast_tmp.amis.schema.enums import ControlEnum
 from fast_tmp.amis.schema.widgets import Column, Control
 
 
@@ -55,10 +56,9 @@ def pf_2_jsf(field_type: str) -> str:
     把python的字段类型转为js的类型
     """
     if field_type == "integer":
-        return "number"
-
+        return ControlEnum.number
     else:
-        return "text"
+        return ControlEnum.text
 
 
 def get_coulmns_from_pmc(
