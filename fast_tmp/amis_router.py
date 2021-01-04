@@ -1,4 +1,4 @@
-from typing import Any, Callable, Dict, List, Optional, Sequence, Set, Type, Union
+from typing import Any, Callable, ClassVar, Dict, List, Optional, Sequence, Set, Type, Union
 
 from fastapi import APIRouter, params, routing
 from fastapi.datastructures import Default, DefaultPlaceholder
@@ -22,6 +22,7 @@ from fast_tmp.utils.urls import get_route_url
 
 class AmisRouter(routing.Router):
     page: Page
+    permissions: ClassVar[Dict[str, bool]] = {}
 
     def __init__(
         self,
@@ -143,6 +144,7 @@ class AmisRouter(routing.Router):
         self,
         path: str,
         *,
+        permission_model: Optional[str] = None,
         view: Optional[BaseAmisModel] = None,
         response_model: Optional[Type[Any]] = None,
         status_code: int = 200,
@@ -168,6 +170,13 @@ class AmisRouter(routing.Router):
     ) -> Callable[[DecoratedCallable], DecoratedCallable]:
         if view:
             self.page.body.append(view)
+        if permission_model:
+            p = []
+            p.append(self.prefix)
+            p.extend(methods)
+            permision_str = "_".join(p)
+            permision_str = permision_str.replace("/", "")
+            AmisRouter.permissions[permision_str] = permission_model
 
         def decorator(func: DecoratedCallable) -> DecoratedCallable:
             self.add_api_route(
@@ -322,6 +331,7 @@ class AmisRouter(routing.Router):
         path: str,
         *,
         view: Optional[BaseAmisModel] = None,
+        permission_model: Optional[str] = None,
         response_model: Optional[Type[Any]] = None,
         status_code: int = 200,
         tags: Optional[List[str]] = None,
@@ -346,6 +356,7 @@ class AmisRouter(routing.Router):
         return self.api_route(
             path=path,
             view=view,
+            permission_model=permission_model,
             response_model=response_model,
             status_code=status_code,
             tags=tags,
@@ -374,6 +385,7 @@ class AmisRouter(routing.Router):
         path: str,
         *,
         view: Optional[BaseAmisModel] = None,
+        permission_model: Optional[str] = None,
         response_model: Optional[Type[Any]] = None,
         status_code: int = 200,
         tags: Optional[List[str]] = None,
@@ -398,6 +410,7 @@ class AmisRouter(routing.Router):
         return self.api_route(
             path=path,
             view=view,
+            permission_model=permission_model,
             response_model=response_model,
             status_code=status_code,
             tags=tags,
@@ -426,6 +439,7 @@ class AmisRouter(routing.Router):
         path: str,
         *,
         view: Optional[BaseAmisModel] = None,
+        permission_model: Optional[str] = None,
         response_model: Optional[Type[Any]] = None,
         status_code: int = 200,
         tags: Optional[List[str]] = None,
@@ -450,6 +464,7 @@ class AmisRouter(routing.Router):
         return self.api_route(
             path=path,
             view=view,
+            permission_model=permission_model,
             response_model=response_model,
             status_code=status_code,
             tags=tags,
@@ -478,6 +493,7 @@ class AmisRouter(routing.Router):
         path: str,
         *,
         view: Optional[BaseAmisModel] = None,
+        permission_model: Optional[str] = None,
         response_model: Optional[Type[Any]] = None,
         status_code: int = 200,
         tags: Optional[List[str]] = None,
@@ -502,6 +518,7 @@ class AmisRouter(routing.Router):
         return self.api_route(
             path=path,
             view=view,
+            permission_model=permission_model,
             response_model=response_model,
             status_code=status_code,
             tags=tags,
@@ -582,6 +599,7 @@ class AmisRouter(routing.Router):
         path: str,
         *,
         view: Optional[BaseAmisModel] = None,
+        permission_model: Optional[str] = None,
         response_model: Optional[Type[Any]] = None,
         status_code: int = 200,
         tags: Optional[List[str]] = None,
@@ -606,6 +624,7 @@ class AmisRouter(routing.Router):
         return self.api_route(
             path=path,
             view=view,
+            permission_model=permission_model,
             response_model=response_model,
             status_code=status_code,
             tags=tags,
@@ -634,6 +653,7 @@ class AmisRouter(routing.Router):
         path: str,
         *,
         view: Optional[BaseAmisModel] = None,
+        permission_model: Optional[str] = None,
         response_model: Optional[Type[Any]] = None,
         status_code: int = 200,
         tags: Optional[List[str]] = None,
@@ -658,6 +678,7 @@ class AmisRouter(routing.Router):
         return self.api_route(
             path=path,
             view=view,
+            permission_model=permission_model,
             response_model=response_model,
             status_code=status_code,
             tags=tags,
@@ -685,6 +706,8 @@ class AmisRouter(routing.Router):
         self,
         path: str,
         *,
+        view: Optional[BaseAmisModel] = None,
+        permission_model: Optional[str] = None,
         response_model: Optional[Type[Any]] = None,
         status_code: int = 200,
         tags: Optional[List[str]] = None,
@@ -706,9 +729,10 @@ class AmisRouter(routing.Router):
         name: Optional[str] = None,
         callbacks: Optional[List[BaseRoute]] = None,
     ) -> Callable[[DecoratedCallable], DecoratedCallable]:
-
         return self.api_route(
             path=path,
+            view=view,
+            permission_model=permission_model,
             response_model=response_model,
             status_code=status_code,
             tags=tags,
