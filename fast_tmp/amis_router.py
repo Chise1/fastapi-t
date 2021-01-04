@@ -6,7 +6,6 @@ from fastapi.encoders import DictIntStrAny, SetIntStr
 from fastapi.routing import APIRoute, APIWebSocketRoute
 from fastapi.types import DecoratedCallable
 from fastapi.utils import get_value_or_default
-from pydantic.schema import schema
 from starlette import routing
 from starlette.requests import Request
 from starlette.responses import HTMLResponse, JSONResponse, Response
@@ -69,7 +68,7 @@ class AmisRouter(routing.Router):
         self.dependency_overrides_provider = dependency_overrides_provider
         self.route_class = route_class
         self.default_response_class = default_response_class
-        self.get("/html", response_class=HTMLResponse)(admin_template(self))
+        self.get("/html", response_class=HTMLResponse)(HtmlTemplate(self))
 
     def add_api_route(
         self,
@@ -144,6 +143,7 @@ class AmisRouter(routing.Router):
         self,
         path: str,
         *,
+        view: Optional[BaseAmisModel] = None,
         response_model: Optional[Type[Any]] = None,
         status_code: int = 200,
         tags: Optional[List[str]] = None,
@@ -166,6 +166,9 @@ class AmisRouter(routing.Router):
         name: Optional[str] = None,
         callbacks: Optional[List[BaseRoute]] = None,
     ) -> Callable[[DecoratedCallable], DecoratedCallable]:
+        if view:
+            self.page.body.append(view)
+
         def decorator(func: DecoratedCallable) -> DecoratedCallable:
             self.add_api_route(
                 path,
@@ -340,10 +343,9 @@ class AmisRouter(routing.Router):
         name: Optional[str] = None,
         callbacks: Optional[List[BaseRoute]] = None,
     ) -> Callable[[DecoratedCallable], DecoratedCallable]:
-        if view:
-            self.page.body.append(view)
         return self.api_route(
             path=path,
+            view=view,
             response_model=response_model,
             status_code=status_code,
             tags=tags,
@@ -393,11 +395,9 @@ class AmisRouter(routing.Router):
         name: Optional[str] = None,
         callbacks: Optional[List[BaseRoute]] = None,
     ) -> Callable[[DecoratedCallable], DecoratedCallable]:
-        if view:
-            self.page.body.append(view)
-
         return self.api_route(
             path=path,
+            view=view,
             response_model=response_model,
             status_code=status_code,
             tags=tags,
@@ -447,11 +447,9 @@ class AmisRouter(routing.Router):
         name: Optional[str] = None,
         callbacks: Optional[List[BaseRoute]] = None,
     ) -> Callable[[DecoratedCallable], DecoratedCallable]:
-        if view:
-            self.page.body.append(view)
-
         return self.api_route(
             path=path,
+            view=view,
             response_model=response_model,
             status_code=status_code,
             tags=tags,
@@ -501,10 +499,9 @@ class AmisRouter(routing.Router):
         name: Optional[str] = None,
         callbacks: Optional[List[BaseRoute]] = None,
     ) -> Callable[[DecoratedCallable], DecoratedCallable]:
-        if view:
-            self.page.body.append(view)
         return self.api_route(
             path=path,
+            view=view,
             response_model=response_model,
             status_code=status_code,
             tags=tags,
@@ -531,7 +528,7 @@ class AmisRouter(routing.Router):
     def options(
         self,
         path: str,
-        view: BaseAmisModel,
+        view: Optional[BaseAmisModel] = None,
         *,
         response_model: Optional[Type[Any]] = None,
         status_code: int = 200,
@@ -556,6 +553,7 @@ class AmisRouter(routing.Router):
     ) -> Callable[[DecoratedCallable], DecoratedCallable]:
         return self.api_route(
             path=path,
+            view=view,
             response_model=response_model,
             status_code=status_code,
             tags=tags,
@@ -583,6 +581,7 @@ class AmisRouter(routing.Router):
         self,
         path: str,
         *,
+        view: Optional[BaseAmisModel] = None,
         response_model: Optional[Type[Any]] = None,
         status_code: int = 200,
         tags: Optional[List[str]] = None,
@@ -606,6 +605,7 @@ class AmisRouter(routing.Router):
     ) -> Callable[[DecoratedCallable], DecoratedCallable]:
         return self.api_route(
             path=path,
+            view=view,
             response_model=response_model,
             status_code=status_code,
             tags=tags,
@@ -632,8 +632,8 @@ class AmisRouter(routing.Router):
     def patch(
         self,
         path: str,
-        view: BaseAmisModel,
         *,
+        view: Optional[BaseAmisModel] = None,
         response_model: Optional[Type[Any]] = None,
         status_code: int = 200,
         tags: Optional[List[str]] = None,
@@ -657,6 +657,7 @@ class AmisRouter(routing.Router):
     ) -> Callable[[DecoratedCallable], DecoratedCallable]:
         return self.api_route(
             path=path,
+            view=view,
             response_model=response_model,
             status_code=status_code,
             tags=tags,
@@ -732,7 +733,7 @@ class AmisRouter(routing.Router):
         )
 
 
-class admin_template:
+class HtmlTemplate:
     def __init__(self, router: AmisRouter):
         self.router = router
 

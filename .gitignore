@@ -3,4 +3,5 @@ venv/
 .env
 migrations/
 aerich.ini
-__pycache__/
+*__pycache__/
+.mypy_cache/
