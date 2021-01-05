@@ -1,6 +1,5 @@
 from tortoise import Model, fields
 
-# from fast_tmp.models import User, Group, Permission
 from src.enums import Status, Status2
 
 
@@ -8,17 +7,45 @@ class MessageUser(Model):
     nickname = fields.CharField(max_length=32)
 
 
+class MessageM2M(Model):
+    msg = fields.CharField(max_length=128)
+
+
+class MessageM2M2(Model):
+    msg = fields.CharField(max_length=128)
+    messages = fields.ManyToManyField("models.Message")
+
+
+class MessageOther(Model):
+    other_info = fields.CharField(max_length=32)
+
+
 class Message(Model):
+    ix = fields.IntField(verbose_name="message_ix", default=10)
     info = fields.CharField(max_length=32, description="信息")
     error_info = fields.IntEnumField(Status)
     error_info_str = fields.CharEnumField(Status2)
     message_user = fields.ForeignKeyField("models.MessageUser")
+    send_time = fields.DatetimeField()
+    send_date = fields.DateField()
+    d = fields.CharField(max_length=12)
+    message_m2ms = fields.ManyToManyField("models.MessageM2M")
+    js = fields.JSONField()
+    fl = fields.FloatField()
+    uuid = fields.UUIDField()
+    td = fields.TimeDeltaField()
+    other_field = fields.OneToOneField("models.MessageOther")
+    text = fields.TextField()
+    small_int = fields.SmallIntField()
+    big_int = fields.BigIntField()
+    biny = fields.BinaryField()
+    dec = fields.DecimalField(max_digits=10, decimal_places=3)
+    bl = fields.BooleanField(default=False)
 
 
 class Tournament(Model):
     id = fields.IntField(pk=True)
     name = fields.TextField()
-
     events: fields.ReverseRelation["Event"]
 
     def __str__(self):
@@ -56,7 +83,6 @@ class Address(Model):
 class Team(Model):
     id = fields.IntField(pk=True)
     name = fields.TextField()
-
     events: fields.ManyToManyRelation[Event]
 
     def __str__(self):

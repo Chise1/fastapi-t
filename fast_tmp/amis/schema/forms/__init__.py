@@ -1,10 +1,8 @@
 from typing import List, Optional
 
-from pydantic import HttpUrl
-
-from .abstract_schema import BaseAmisModel, Message, _Action
-from .enums import TypeEnum
-from .widgets import AbstractControl
+from fast_tmp.amis.schema.abstract_schema import BaseAmisModel
+from fast_tmp.amis.schema.enums import TypeEnum
+from fast_tmp.amis.schema.forms.widgets import AbstractControl
 
 
 class Form(BaseAmisModel):

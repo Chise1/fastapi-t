@@ -56,13 +56,6 @@ class TypeEnum(str, Enum):
     nav = "nav"
 
 
-class WidgetSize:
-    lg = "lg"  # 大
-    md = "md"  # 中,默认值
-    sm = "sm"  # 小
-    xs = "xs"  # 极小
-
-
 class ButtonSize(
     str,
     Enum,
@@ -80,27 +73,3 @@ class DialogSize(str, Enum):
     sm = "sm"  # 小
     xl = "xl"
     xs = "xs"  # 极小
-
-
-class FormWidgetSize(
-    str,
-    Enum,
-):
-    full = "full"
-    lg = "lg"  # 大
-    md = "md"  # 中,默认值
-    sm = "sm"  # 小
-    xs = "xs"  # 极小
-
-
-class ControlEnum(str, Enum):
-    text = "text"
-    switch = "switch"  # 开关
-    select = "select"
-    number = "number"
-
-
-class ItemModel(str, Enum):
-    horizontal = "horizontal"
-    inline = "inline"
-    normal = "normal"

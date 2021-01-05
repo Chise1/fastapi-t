@@ -1,6 +1,7 @@
+import inspect
 from typing import Any, Callable, ClassVar, Dict, List, Optional, Sequence, Set, Type, Union
 
-from fastapi import APIRouter, params, routing
+from fastapi import APIRouter, Depends, params, routing
 from fastapi.datastructures import Default, DefaultPlaceholder
 from fastapi.encoders import DictIntStrAny, SetIntStr
 from fastapi.routing import APIRoute, APIWebSocketRoute
@@ -13,6 +14,7 @@ from starlette.routing import BaseRoute
 from starlette.routing import Mount as Mount  # noqa
 from starlette.types import ASGIApp
 
+from fast_tmp.amis.func import need_permission, need_permission2
 from fast_tmp.amis.schema.abstract_schema import BaseAmisModel
 from fast_tmp.amis.schema.page import Page
 from fast_tmp.responses import AmisResponse
@@ -69,7 +71,9 @@ class AmisRouter(routing.Router):
         self.dependency_overrides_provider = dependency_overrides_provider
         self.route_class = route_class
         self.default_response_class = default_response_class
-        self.get("/html", response_class=HTMLResponse)(HtmlTemplate(self))
+        self.get(
+            "/html",
+        )(HtmlTemplate(self))
 
     def add_api_route(
         self,
@@ -204,6 +208,20 @@ class AmisRouter(routing.Router):
                 name=name,
                 callbacks=callbacks,
             )
+            if permission_model:  # fixme:实用化该功能
+                x = inspect.signature(func)
+                p = x.parameters
+                s = []
+                for k, v in p.items():
+                    if id(need_permission) == id(v.default.dependency):
+                        v = inspect.Parameter(
+                            name=v.name,
+                            kind=v.kind,
+                            default=Depends(need_permission2),
+                            annotation=v.annotation,
+                        )
+                    s.append(v)
+                func.__signature__ = inspect.Signature(s)
             return func
 
         return decorator
@@ -766,7 +784,6 @@ class HtmlTemplate:
         self,
         request: Request,
     ):
-        print(self.router.page.json())
         return templates.TemplateResponse(
             "admin/crud.html",
             {
