@@ -41,7 +41,18 @@ class Message(Model):
     biny = fields.BinaryField()
     dec = fields.DecimalField(max_digits=10, decimal_places=3)
     bl = fields.BooleanField(default=False)
+    b_message: fields.ForeignKeyRelation['Bmessage']
 
+
+class Amessage(Model):
+    messages = fields.ForeignKeyField("models.Message")
+
+
+class Bmessage(Model):
+    messages = fields.ForeignKeyField("models.Message")
+
+class Cmessage(Model):
+    id=fields.OneToOneField("Message",pk=True)
 
 class Tournament(Model):
     id = fields.IntField(pk=True)

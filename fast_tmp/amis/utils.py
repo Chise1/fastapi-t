@@ -221,6 +221,4 @@ def get_columns_from_model(
                 print(field_type.enum_type)
         else:
             res.append(Column(name=field, label=field_type.kwargs.get("verbose_name", field)))
-    if add_type:
-        print(res)
     return res

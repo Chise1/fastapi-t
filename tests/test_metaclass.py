@@ -43,4 +43,3 @@ class Admin(metaclass=MediaMetaClass):
 
 
 a = Admin()
-print()
