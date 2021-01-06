@@ -5,7 +5,7 @@ from pydantic import HttpUrl
 from fast_tmp.amis.schema.abstract_schema import BaseAmisModel, _Action
 from fast_tmp.amis.schema.buttons import Operation
 from fast_tmp.amis.schema.enums import TypeEnum
-from fast_tmp.amis.schema.forms.widgets import Column
+from fast_tmp.amis.schema.forms import Column
 
 
 class CRUD(BaseAmisModel):

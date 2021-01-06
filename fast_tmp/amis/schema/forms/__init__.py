@@ -1,10 +1,10 @@
-from typing import List, Optional
-from typing import Dict, Any, List, Union
+from typing import Any, Dict, List, Optional, Union
+
 from pydantic import BaseModel
 
-from fast_tmp.amis.schema.forms.enums import ControlEnum, FormWidgetSize, ItemModel
 from fast_tmp.amis.schema.abstract_schema import BaseAmisModel
 from fast_tmp.amis.schema.enums import TypeEnum
+from fast_tmp.amis.schema.forms.enums import ControlEnum, FormWidgetSize, ItemModel
 
 
 # fixme:未来考虑更多的fields类型字段支持

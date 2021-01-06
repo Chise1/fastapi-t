@@ -4,11 +4,8 @@ from pydantic import HttpUrl
 from pydantic.main import BaseModel
 
 from fast_tmp.amis.schema.abstract_schema import _Action
-from fast_tmp.amis.schema.forms import Control, AbstractControl
+from fast_tmp.amis.schema.forms import AbstractControl, Control
 from fast_tmp.amis.schema.forms.enums import ControlEnum, FormWidgetSize, ItemModel
-
-
-
 
 
 class AddControl(BaseModel):
@@ -22,14 +19,12 @@ class Item(BaseModel):
     value: Union[str, int]
 
 
-
 class ItemValidation(BaseModel):  # 验证工具
     pass
 
 
 class ItemValidationError(BaseModel):
     pass
-
 
 
 class NumberItem(Control):

@@ -1,4 +1,4 @@
-from typing import Optional, Any
+from typing import Any, Optional
 
 from . import Control, ControlEnum
 
@@ -8,4 +8,3 @@ class SwitchItem(Control):
     option: Optional[str]
     trueValue: Any = True
     falseValue: Any = False
-

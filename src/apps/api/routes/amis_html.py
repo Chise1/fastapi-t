@@ -7,6 +7,9 @@
 @Software: PyCharm
 @info    :
 """
+from starlette.requests import Request
+from starlette.responses import HTMLResponse
+
 from fast_tmp.amis.schema.actions import AjaxAction, DialogAction, DrawerAction
 from fast_tmp.amis.schema.buttons import Operation
 from fast_tmp.amis.schema.crud import CRUD
@@ -16,6 +19,7 @@ from fast_tmp.amis.schema.frame import Dialog, Drawer
 from fast_tmp.amis.utils import get_columns_from_model
 from fast_tmp.amis_router import AmisRouter
 from fast_tmp.conf import settings
+from fast_tmp.templates_app import templates
 from src.models import Message
 from src.schemas import ResMessageList, message_list_schema, message_schema
 
@@ -41,9 +45,9 @@ router = AmisRouter(prefix="/amis")
                                 body=Form(
                                     name="message_update",
                                     api="put:"
-                                    + settings.SERVER_URL
-                                    + router.prefix
-                                    + "/message/${id}",
+                                        + settings.SERVER_URL
+                                        + router.prefix
+                                        + "/message/${id}",
                                     initApi=settings.SERVER_URL + router.prefix + "/message/${id}",
                                     controls=get_columns_from_model(
                                         Message, add_type=True, exclude_readonly=True
@@ -112,3 +116,53 @@ async def get_one_message(id: int):
 )
 async def delete_message(id: int):
     await Message.filter(id=id).delete()
+
+
+@router.get("/test", response_class=HTMLResponse)
+async def index(
+        request: Request,
+):
+    page = CRUD(
+        api=settings.SERVER_URL + router.prefix + "/message",
+        columns=get_columns_from_model(
+            Message,
+            add_type=False,
+            extra_fields=[
+                Operation(
+                    label="修改",
+                    buttons=[
+                        DrawerAction(
+                            label="修改",
+                            drawer=Drawer(
+                                title="修改数据",
+                                body=Form(
+                                    name="message_update",
+                                    api="put:"
+                                        + settings.SERVER_URL
+                                        + router.prefix
+                                        + "/message/${id}",
+                                    initApi=settings.SERVER_URL + router.prefix + "/message/${id}",
+                                    controls=get_columns_from_model(
+                                        Message, add_type=True, exclude_readonly=True
+                                    ),
+                                ),
+                            ),
+                        ),
+                        AjaxAction(
+                            label="删除",
+                            level=ButtonLevelEnum.danger,
+                            confirmText="确认要删除？",
+                            api="delete:http://127.0.0.1:8000/amis/message/${id}",
+                        ),
+                    ],
+                )
+            ],
+        ),
+    )
+    return templates.TemplateResponse(
+        "admin/crud.html",
+        {
+            "request": request,
+            "page": page.json(),
+        },
+    )

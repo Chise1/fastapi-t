@@ -6,9 +6,9 @@ from tortoise import Model
 from tortoise.fields import BigIntField, CharField, IntField, SmallIntField
 from tortoise.fields.data import CharEnumFieldInstance, DatetimeField, IntEnumFieldInstance
 
+from fast_tmp.amis.schema.forms import Column
 from fast_tmp.amis.schema.forms.enums import ControlEnum, FormWidgetSize, ItemModel
 from fast_tmp.amis.schema.forms.widgets import (
-    Column,
     Control,
     DatetimeItem,
     NumberItem,
